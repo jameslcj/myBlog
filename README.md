@@ -31,4 +31,3 @@ hexo s
 ```
 hexo d
 ```
-# myBlog
