@@ -4,6 +4,9 @@ date: 2017-07-11 10:30:24
 tags: javaScript高级程序设计笔记
 ---
 ## window
+> 浏览器对象模型(BOM)以window对象为依托;
+使用frames框架集合时, 每个框架都有自己的window对象以及所有原生构造函数及其他函数的副本
+
 ### 全局作用域
 > 所有全局作用域下声明的变量和函数都会变成`window`的属性和方法
 
@@ -132,15 +135,91 @@ location.assign("https://www.aliyun.com");
 ```
 
 ### replace
-> 上面的方式都会生成浏览历史, 可以通过后退回到之前页面; 使用location.replace('https://www.aliyun.com'), 就无法回退到之前的页面
+> 上面的方式都会生成浏览历史, 可以通过后退回到之前页面; 使用`location.replace('https://www.aliyun.com')`, 就无法回退到之前的页面
 
 ```
 location.replace('https://www.aliyun.com');
 ```
 ### reload重新加载页面
-> reload可以重新加载页面, 它接受一个boolen参数, 如果传递为true, 强制从服务器重新加载, 否则有可能从缓存中加载
+> `reload`可以重新加载页面, 它接受一个布尔值参数, 如果传递为`true`, 强制从服务器重新加载, 否则有可能从缓存中加载
 
 ```
 location.reload();//重新加载(有可能从缓存中加载)
 location.reload(true);//重新加载(从服务器重新加载)
+```
+
+## navigator
+### 属性方法
+![navigator属性方法](https://img.alicdn.com/tfs/TB1x1ZHSXXXXXbEXpXXXXXXXXXX-676-604.png)
+![navigator属性方法](https://img.alicdn.com/tfs/TB1lQb5SXXXXXaTapXXXXXXXXXX-676-247.png)
+
+### 检测插件
+> 非IE浏览器, 可以使用`navigator.plugins`来检测;
+而IE只能通过专有的`ActiveXObject`类型, 并且使用`COM`对象的方式实现插件, `Flash`的标识符是`ShockwaveFlash.ShockwaveFlash`
+
+```
+//非IE
+function hasPlugin(name) {
+  name = name.toLowerCase();
+  for (var i = 0; i < navigator.plugins.length; i++) {
+    if (navigator.plugins[i].name.toLowerCase().indexOf(name) > -1) {
+      return true;
+    }
+  }
+  return false;
+}
+//检测Flash
+console.log(hasPlugin("Flash"));
+
+//IE下
+function hasIEPlugin(name) {
+  try {
+    new ActiveXObject(name);
+    return true;
+  } catch (ex) {
+    return false;
+  }
+}
+//检测Flash
+console.log(hasIEPlugin("ShockwaveFlash.ShockwaveFlash"));
+```
+
+> `navigator.plugins.refresh()` 可以刷新plugins已反映最新安装的插件;
+这个函数接受一个布尔值, 当为true时, 会重新加载包含插件的所有页面, 否则, 只更新plugins集合, 不重新加载页面;
+
+```
+navigator.plugins.refresh(true);
+```
+
+### 注册处理程序
+> html5定义了`navigator.registerContentHandler(要处理的MIME类型, 页面URL, 应用程序名称)`和`navigator.registerProtocolHandler(要处理的协议, 页面的URL, 应用程序名称)`
+这两个方法可以让一个站点知名它可以处理特定类型的信息
+
+```
+navigator.registerContentHandler("application/res+xml", "http://www.somereader.com?feed=%s", "Some Reader");
+navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%s", "Some Mail Client");
+```
+
+### screen
+> 用户不大, 主要用来显示浏览器窗口外部的显示器的信息;
+设计移动设备的屏幕大小时, 情况有点不一样, iOS设备始终返回竖着拿在手里时屏幕的大小, 而安卓设备则会调用`screen.width`和`screen.height`的值
+
+![screen](https://img.alicdn.com/tfs/TB1tXUwSXXXXXXQXVXXXXXXXXXX-693-715.png)
+
+### history
+> 记录浏览历史
+
+```
+//后退一页
+history.go(-1);
+//前进一页
+history.go(1);
+//后退一页
+history.back();
+//前进一页
+history.forward(1);
+//跳转到最近浏览的google.com页面 ps:亲测,没生效 - -
+history.go("google.com");
+//可以获取有几个浏览历史页面记录
+history.length
 ```
