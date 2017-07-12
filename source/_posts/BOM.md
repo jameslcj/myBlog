@@ -76,6 +76,7 @@ if (typeof pageWidth != 'number') {
 
 - 第三个参数可用参数信息:
 ![第三个可用参数](https://img.alicdn.com/tfs/TB1VwkhSXXXXXXdXVXXXXXXXXXX-1056-472.png)
+
 > 在ie8和chrome中, 为了能与新打开的页面保持通信, 我们获取了它的引用, 但是为了保持通信, 就不能在独立进程中运行.
 所以如果需要独立运行, 就需要将这个引用设置为`null`, 一旦切断, 就没有办法恢复;
 
@@ -103,4 +104,43 @@ try {
 if (blocked) {
   alert("The popup was blocked!");
 }
+```
+
+## location
+> `window.location`和`document.location`引用的是同一个对象
+
+### location属性
+> https://www.aliyun.com:80/aliware/?q=something#page=1
+
+| 属性名 | 例子 | 说明 |
+| ------| ------ | ------ |
+| hash | "#page=1" | #号后面的内容 |
+| host | "www.aliyun.com:80" | 返回服务器名称和端口号(如果有) |
+| hostname | "www.aliyun.com" | 返回服务器名称 |
+| href | "http://www.aliyun.com:80/aliware/?q=something#page=1" | 返回当前加载页完整URL地址和location.toString()相等 |
+| pathname | "/aliware/" | 返回URL中的目录和文件名 |
+| protocol | "https:" | 返回URL中的目录和文件名 |
+| search | "?q=something" | 返回URL的查询字符串. 这个字符串以问号开头 |
+
+### 改变地址的方式
+
+```
+window.location = "https://www.aliyun.com";
+location.href = "https://www.aliyun.com";
+//上面2种方式, 最终还是调用了下面的方法
+location.assign("https://www.aliyun.com");
+```
+
+### replace
+> 上面的方式都会生成浏览历史, 可以通过后退回到之前页面; 使用location.replace('https://www.aliyun.com'), 就无法回退到之前的页面
+
+```
+location.replace('https://www.aliyun.com');
+```
+### reload重新加载页面
+> reload可以重新加载页面, 它接受一个boolen参数, 如果传递为true, 强制从服务器重新加载, 否则有可能从缓存中加载
+
+```
+location.reload();//重新加载(有可能从缓存中加载)
+location.reload(true);//重新加载(从服务器重新加载)
 ```
