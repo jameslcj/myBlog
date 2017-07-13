@@ -200,13 +200,13 @@ navigator.registerContentHandler("application/res+xml", "http://www.somereader.c
 navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%s", "Some Mail Client");
 ```
 
-### screen
+## screen
 > 用户不大, 主要用来显示浏览器窗口外部的显示器的信息;
 设计移动设备的屏幕大小时, 情况有点不一样, iOS设备始终返回竖着拿在手里时屏幕的大小, 而安卓设备则会调用`screen.width`和`screen.height`的值
 
 ![screen](https://img.alicdn.com/tfs/TB1tXUwSXXXXXXQXVXXXXXXXXXX-693-715.png)
 
-### history
+## history
 > 记录浏览历史
 
 ```
