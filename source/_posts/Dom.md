@@ -129,3 +129,22 @@ console.log(shallowList.childNodes.length);//0
 ```
 
 ## document类型
+> document是HTMLDocument的一个实例
+
+```
+document.nodeType//9
+document.nodeName //#document
+document.nodeValue//null
+document.parentNode//null
+document.ownerDocument//null
+```
+
+### 文档的子节点
+```
+<html>
+  <head></head>
+  <body></body>
+<html>
+
+document.childNodes[1] === document.documentElement //true
+```
