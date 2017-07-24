@@ -143,6 +143,7 @@ document.ownerDocument//null
 - document.documentElement
 - document.body
 - document.doctype(只读), 各浏览器对其是否解析为document的子节点各不相同
+
 ```
 <html>
   <head></head>
@@ -159,3 +160,10 @@ document.childNodes[0] === document.documentElement //true
 - document.domain
 > 由于安全方面的限制, 这个值只能设置为URL中的子域名, 比如:www.test.com只能设置为test.com;
 这个值的用处是, 当一个页面嵌套一个同域子页面时, 如果要想通过JavaScript进行通信, 则必须将两个页面的document.domain设置为同一个域, 才可以进行通信;
+
+- namedItem
+```
+<img src="myimage.gif" name="myImage">
+var images = document.getElementByTagName("img");
+images.namedItem("myImage");
+```
