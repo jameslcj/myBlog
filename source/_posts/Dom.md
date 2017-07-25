@@ -158,12 +158,102 @@ document.childNodes[0] === document.documentElement //true
 - document.URL(只读) 当前地址
 - document.referrer(只读) 来源网站的URL
 - document.domain
+
 > 由于安全方面的限制, 这个值只能设置为URL中的子域名, 比如:www.test.com只能设置为test.com;
 这个值的用处是, 当一个页面嵌套一个同域子页面时, 如果要想通过JavaScript进行通信, 则必须将两个页面的document.domain设置为同一个域, 才可以进行通信;
 
 - namedItem
+> 对`HTMlCollectio`n集合调用数字索引值时, 就会调用`item()`方法, 如果调用字符串索引值就会调用`namedItem()`方法
+
 ```
 <img src="myimage.gif" name="myImage">
-var images = document.getElementByTagName("img");
+// 获取HTMLCollection集合
+var images = document.getElementByTagName("img")
 images.namedItem("myImage");
+//等价于
+images["myImage"]
+```
+
+> `document.getElementByTagName('*')`可以获取所有元素, 但是在ie下注释的元素也会被获取
+
+### 特殊集合
+- document.anchors 所有带`name`标签的<a>元素
+- document.applets 所有<applets>元素
+- document.forms 所有<form>元素
+- document.images 所有<img> 元素
+- document.links 所有带`href`特性的<a>元素
+- document.write() 将输出流写入网页
+- document.writeln() 将输出流写入网页并换行
+
+> `document.write/writeln` 这2个方法会重写`整个页面`, 还有如果输出`</script>`一定要转译成`<\/script>`, 否则会报错
+
+## Element类型
+- nodeType值为1
+- nodeName/tagName值为元素的标签名
+- nodeValue值为null
+- parentNode值为Document或Element
+
+> nodeName一般为大写, 所以先进行转大小写, 再进行比较
+
+```
+<a>我是a标签</a>
+var a = document.getElementsByTagName("a")[0]
+a.nodeName //A
+a.nodeName === a.tagName//true
+if (a.nodeName.toLowerCase == 'a') {
+  //do something
+}
+```
+
+### html元素
+> 每个html元素都有如下属性
+
+- id
+- title
+- className
+- lang 元素内容的语言代码, 很少使用
+- dir 语言的方法, 值为 "ltr" 或 "rtl"
+```
+<div id="div1" class="myClass" title="myTitle" lang="en" dir="ltr"></div>
+var div = document.getElementById("div1");
+div.id;//div1
+div.className;//myClass
+div.title;//myTitle
+div.lang;//en
+div.dir;//ltr
+```
+
+### 取得特性
+- getAttribute() 获取属性, 获取的属性名与实际相同, 所以获取class时, 使用getAttribute('class')就可以而不是className
+
+> 只有公认的属性会添加到DOM对象上(ie除外), 其他的自定义属性需要使用`getAttribute()`获取;
+获取`style`属性时会返回一个对象或是`null`, 获取事件属性时会返回函数或者`null`
+
+```
+<div id="div1" class="myClass" my_attr="myAttr"></div>
+var div = document.getElementById("div1");
+div.my_attr;//undefined(ie除外)
+div.getAttribute("my_attr");//myAttr
+div.getAttribute("class");//myClass
+```
+
+### 设置特性
+- setAttribute() 设置属性
+
+```
+<div id="div1" class="myClass" my_attr="myAttr"></div>
+var div = document.getElementById("div1");
+div.setAttribute("title", "myTitle");
+div.className = "newClass";
+//如果这样直接设置属性, 在大多数浏览器下, 这个属性不会自动变成元素的特性, 因此用getAttribute("myColor")结果为null
+div.myColor = "red";
+```
+
+### 删除属性
+- removeAttribute() 删除属性
+
+```
+<div id="div1" class="myClass" my_attr="myAttr"></div>
+var div = document.getElementById("div1");
+div.removeAttribute("class");
 ```
