@@ -257,3 +257,56 @@ div.myColor = "red";
 var div = document.getElementById("div1");
 div.removeAttribute("class");
 ```
+
+### attributes属性
+- getNamedItem(name) 获取名为name的属性
+- removeNamedItem(name) 删除名为name的属性
+- setNamedItem(node) 向列表中添加节点, 以节点的nodeName为索引
+- item(pos) 返回位于数字pos位置的节点
+
+```
+var id = element.attributes.getNamedItem("id").nodeValue;
+//等价于如下
+var id = element.attributes["id"].nodeValue;
+```
+
+### 创建元素
+- document.createElement()
+
+> 由于在ie7以下, 某些动态创建的元素会有问题, 建议使用完整的html创建, 其他浏览器就使用标签创建
+
+```
+if (client.browser.ie && client.browser.ie <= 7) {
+  var iframe = document.createElement("<iframe name=\"myName\"></iframe>");
+} else {
+  var iframe = document.createElement("iframe");
+}
+```
+### 元素子节点
+> 除ie浏览器外, 都会计算子节点下的空白节点, 因此判断子节点时候, 对nodeType进行判断是否为1
+
+```
+<ul>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+
+var element = document.getElementsByTagName('ul')[0];
+element.childNodes.length; //非ie为3, 其他浏览器为7
+
+
+//-----------------
+<ul><li></li><li></li><li></li></ul>
+
+var element = document.getElementsByTagName('ul')[0];
+element.childNodes.length; //所有浏览器都为3
+
+for (var i = 0; i < element.childNodes.length; i++) {
+
+  if (element.childNodes[i].nodeType == 1) {
+    //do something
+  }
+
+}
+```
