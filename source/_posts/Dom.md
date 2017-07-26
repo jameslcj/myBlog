@@ -29,7 +29,8 @@ Node.CDATA_SECTION_NODE(4);
 Node.ENTITY_REFERENCE_NODE(5);
 Node.ENTITY_NODE(6);
 Node.PROCESSING_INSTRUCTION_NODE(7);
-Node.COMMENT_NODE(8);
+Node.COMMEN
+T_NODE(8);
 Node.DOCUMENT_NODE(9);
 Node.DOCUMENT_TYPE_NODE(10);
 Node.DOCUMENT_FRAGMENT_NODE(11);
@@ -310,3 +311,10 @@ for (var i = 0; i < element.childNodes.length; i++) {
 
 }
 ```
+
+## 文本节点
+- nodeType值为3
+- nodeName值为"#text"
+- nodeValue值为节点所包含的内容
+
+
