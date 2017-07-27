@@ -29,8 +29,7 @@ Node.CDATA_SECTION_NODE(4);
 Node.ENTITY_REFERENCE_NODE(5);
 Node.ENTITY_NODE(6);
 Node.PROCESSING_INSTRUCTION_NODE(7);
-Node.COMMEN
-T_NODE(8);
+Node.COMMENT_NODE(8);
 Node.DOCUMENT_NODE(9);
 Node.DOCUMENT_TYPE_NODE(10);
 Node.DOCUMENT_FRAGMENT_NODE(11);
@@ -55,7 +54,7 @@ someNode.nodeValue;//null
 firstChild获取第一个节点, lastChild获取最后一个节点;
 parentNode可以获取父节点;
 hasChildNodes()可以判断是否有子节点;
-所有节点都有一个属性是ownerDocument, 该属性指向整个文档的文档节点, 即: docuemnt;
+所有节点都有一个属性是ownerDocument, 该属性指向整个文档的文档节点, 即: document;
 以下为获取NoeList中的节点方法
 
 ```
@@ -346,4 +345,51 @@ spanText.deleteData(5, 6);// hello
 var ele = document.getElementsByTagName("span")[0];
 var textNode = document.createTextNode(" world")
 ele.appendChild(textNode);
+```
+
+### 规范化文本节点
+- normalize() 可以将多个子文本节点变成一个
+```
+<span>hello</span>
+
+var ele = document.getElementsByTagName("span")[0];
+var textNode = document.createTextNode(" world")
+ele.appendChild(textNode);
+ele.childNodes.length;//2
+ele.normalize();
+ele.childNodes.length;//1
+```
+
+### 分割文本节点
+- splitText(offset) 指定位置分割文本节点, 功能和normalize()相反
+
+## comment类型
+> 注释节点 功能与text节点相似, 就少一个splitText方法
+
+- nodeType值为8
+- nodeName值为"#comment
+- nodeValue值为注释内容
+- parentNode值为Document或Element
+- 没有子节点
+- document.createComment() 创建注释
+
+### DocumentFragment类型
+> DocumentFragment类型节点类似一个节点仓库, 如果直接在节点树里添加新节点, 会导致页面重绘, 所以我们可以将多次添加的节点, 
+先放到DocumentFragment节点里先, 再添加到dom树中, 这样只需重绘一次就够了.
+
+- nodeType值为11
+- nodeName值为"#document-fragment
+- nodeValue值为null
+- parentNode值为null
+- document.createDocumentFragment()
+
+```
+var fragment = document.createDocumentFragment();
+var ul = document.getElementById("myUl");
+
+for (var i=0; i < 3; i++) {
+  var li = document.createElement('li');
+  fragment.appendChild(li);
+}
+ul.appendChild(fragment);
 ```
