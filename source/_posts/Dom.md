@@ -316,5 +316,34 @@ for (var i = 0; i < element.childNodes.length; i++) {
 - nodeType值为3
 - nodeName值为"#text"
 - nodeValue值为节点所包含的内容
+- parentNode是一个元素节点
+- 不支持子节点
+- appendData(text) 将text添加到节点末尾
+- deleteData(offset, count) 从offset开始删除count个字符
+- insertData(offset, text) 从offset开始插入text
+- replaceData(offset, count, text) 从offset开始, 替换count个字符为text
+- splitText(offset) 从offset位置开始讲文本分成两个文本节点
+- substringData(offset, count) 获取从offset到offset+count为止的字符串
 
+```
+<span>hello</span>
 
+var spanText = document.getElementsByTagName("span")[0].childNodes[0];
+spanText.appendData(" world");// hello world
+spanText.deleteData(5, 6);// hello
+
+//默认情况下, 至多有一个文本节点
+<span></span> //没有文本节点
+<span> </span> //有空格 所以有文本节点
+```
+
+### 创建文本节点
+- document.createTextNode
+
+```
+<span>hello</span>
+
+var ele = document.getElementsByTagName("span")[0];
+var textNode = document.createTextNode(" world")
+ele.appendChild(textNode);
+```
