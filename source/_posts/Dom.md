@@ -159,11 +159,11 @@ document.childNodes[0] === document.documentElement //true
 - document.referrer(只读) 来源网站的URL
 - document.domain
 
-> 由于安全方面的限制, 这个值只能设置为URL中的子域名, 比如:www.test.com只能设置为test.com;
+> 由于安全方面的限制, 这个值只能设置为URL中的子域名, 比如`www.test.com`只能设置为`test.com`;
 这个值的用处是, 当一个页面嵌套一个同域子页面时, 如果要想通过JavaScript进行通信, 则必须将两个页面的document.domain设置为同一个域, 才可以进行通信;
 
 - namedItem
-> 对`HTMlCollectio`n集合调用数字索引值时, 就会调用`item()`方法, 如果调用字符串索引值就会调用`namedItem()`方法
+> 对`HTMlCollection`集合调用数字索引值时, 就会调用`item()`方法, 如果调用字符串索引值就会调用`namedItem()`方法
 
 ```
 <img src="myimage.gif" name="myImage">
@@ -392,4 +392,65 @@ for (var i=0; i < 3; i++) {
   fragment.appendChild(li);
 }
 ul.appendChild(fragment);
+```
+## DOM操作技术
+### 动态脚本
+
+```
+function loadScriptStirng(code) {
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  try {
+    script.appendChild(document.createTextNode(code));
+  } catch(e) {
+    script.text = code;
+  }
+
+  var head = document.getElemntsByTagName("head")[0];
+  head.appendChild(script);
+}
+```
+
+### 动态样式
+
+```
+function loadStyleString(code) {
+  var style = document.createElement("style");
+  style.type = "text/css";
+  try {
+    style.appendChild(document.createTextNode(code))
+  } catch(e) {
+    style.styleSheet.cssText = code;
+  }
+  var head = document.getElemntsByTagName("head")[0];
+  head.appendChild(style);
+}
+```
+
+### 操作表单
+> 因为表格创建比较繁杂, 所以js封装了一些特殊方法, 简化了创建方式
+
+![表格创建方法](https://img.alicdn.com/tfs/TB1vSxxSFXXXXXPXVXXXXXXXXXX-1772-1278.png)
+![表格创建方法2](https://img.alicdn.com/tfs/TB1S2w.SpXXXXcYapXXXXXXXXXX-2088-1516.png)
+
+### 使用NodeList
+> NodeList, NamedNodeMap和HTMLCollection, 这3个集合都是动态的; 也就是说, 每次文档结构发生变化时, 它们都会得到更新; 一般来说, 应尽量减少访问NodeList的次数, 因为每次访问NodeList, 都会运行一次基于文档的查询;
+
+> 如下操作会导致无线循环, 应该避免
+
+```
+var divArr = document.getElementByTagName("div");
+
+//divArr.length 每次操作后都会变动
+for (var i = 0; i < divArr.length; i++) {
+  var div = document.createElement("div");
+  document.body.appendChild(div);
+}
+
+//应该优化为如下
+for (var i = 0, len = divArr.length; i < len; i++) {
+  var div = document.createElement("div");
+  document.body.appendChild(div);
+}
+
 ```
