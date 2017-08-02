@@ -177,11 +177,11 @@ images["myImage"]
 > `document.getElementByTagName('*')`可以获取所有元素, 但是在ie下注释的元素也会被获取
 
 ### 特殊集合
-- document.anchors 所有带`name`标签的<a>元素
-- document.applets 所有<applets>元素
-- document.forms 所有<form>元素
-- document.images 所有<img> 元素
-- document.links 所有带`href`特性的<a>元素
+- document.anchors 所有带`name`标签的`<a>`元素
+- document.applets 所有`<applets>`元素
+- document.forms 所有`<form>`元素
+- document.images 所有`<img>` 元素
+- document.links 所有带`href`特性的`<a>`元素
 - document.write() 将输出流写入网页
 - document.writeln() 将输出流写入网页并换行
 
@@ -213,6 +213,7 @@ if (a.nodeName.toLowerCase == 'a') {
 - className
 - lang 元素内容的语言代码, 很少使用
 - dir 语言的方法, 值为 "ltr" 或 "rtl"
+
 ```
 <div id="div1" class="myClass" title="myTitle" lang="en" dir="ltr"></div>
 var div = document.getElementById("div1");
@@ -349,6 +350,7 @@ ele.appendChild(textNode);
 
 ### 规范化文本节点
 - normalize() 可以将多个子文本节点变成一个
+
 ```
 <span>hello</span>
 
