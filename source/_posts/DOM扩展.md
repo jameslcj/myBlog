@@ -145,3 +145,63 @@ div.dataset.name; //"hello"
 
 > 以上方法有可能导致内存泄露, 因为替换了dom节点后, 之前的dom节点还会在内存中, 因此如果多次替换节点时, 应该先删除要被替换的节点;
 当插入大量html标签时, 建议先拼接好html, 再进行innerHTML或者outerHTML属性, 不要频繁使用, 效率较低
+
+### scrollIntoView() 方法
+> 可以让元素的位置与视口对其, 如果传入true或者不传, 则让元素的顶部与视口对其, 如果传入false, 则尽可能让元素全部出现在视口中
+
+```
+document.getElementsByClassName("cr-content ")[2].scrollIntoView()
+document.getElementsByClassName("cr-content ")[2].scrollIntoView(true);
+
+document.getElementsByClassName("cr-content ")[2].scrollIntoView(false)
+```
+
+## 专有扩展
+### 文档模式
+> 浏览器有很多种渲染模式, 为了强制浏览器以某种模式渲染页面, 可以通过一下方式设置
+
+```
+<meta http-equiv="X-UA-Compatible" content="IE=IEVersion">
+```
+
+### contains
+> 判断是否包含子节点元素
+
+```
+document.documentElement.contains(document.head)//true
+```
+
+### compareDocumentPosition
+> 是一个DOM3级的方法, 来判断节点元素与当前元素的相对位置, 功能和contains类似;
+其返回值为数字, 1 表示无关, 2表示居前, 4表示居后, 8表示包含, 16表示被包含
+
+```
+// 如下返回20, 是因为document.head被包含, 并且居后, 所以加上4, 就是20
+document.documentElement.compareDocumentPosition(document.head);//20
+``
+
+### 插入文本
+- innerText 删除元素节点, 返回文档节点, 或是对文本节点的替换; 如果有元素节点进行替换, 都会被转译掉, 所以为了安全, 在添加文本节点时, 应该使用innerText, 而不是innerHTML
+
+```
+function getInnerText(element) {
+	return (typeof element.textContent == 'string') ? element.textContent : element.innerText;
+}
+function setInnerText(element, text) {
+	if (typeof element.textContent == 'string') {
+		element.textContent = text;
+	} else {
+		element.innerText = text;
+	}
+}
+```
+- outerText
+> 读取功能和`innerText`类似, 但是写的时候, 会替换掉原来的整个元素(包括子节点), 因此不建议使用
+
+### 滚动
+- scrollIntoView() 这个前面说过
+- scrollIntoViewIfNeeded() 功能和scrollIntoView类似, 但只在指定的元素不在可视区时才生效
+- scrollByLines(lineCount) 将元素内容滚动指定的行高, lineCount可正可负
+- scrollByPages(pageCount) 将元素内容滚到到指定的页面高度
+
+> 以上就scrollIntoView所有浏览器都已支持, 其他都只有部分浏览器支持
