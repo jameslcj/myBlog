@@ -125,6 +125,7 @@ var head  = document.head || document.getElementsByTagName("head")[0]
 
 ### 自定义数据属性
 - dataset
+
 ```
 <div data-id="123" data-name="hello"></div>
 var div = document.getElementsByTagName("div")[0];
@@ -178,7 +179,7 @@ document.documentElement.contains(document.head)//true
 ```
 // 如下返回20, 是因为document.head被包含, 并且居后, 所以加上4, 就是20
 document.documentElement.compareDocumentPosition(document.head);//20
-``
+```
 
 ### 插入文本
 - innerText 删除元素节点, 返回文档节点, 或是对文本节点的替换; 如果有元素节点进行替换, 都会被转译掉, 所以为了安全, 在添加文本节点时, 应该使用innerText, 而不是innerHTML
@@ -195,6 +196,7 @@ function setInnerText(element, text) {
 	}
 }
 ```
+
 - outerText
 > 读取功能和`innerText`类似, 但是写的时候, 会替换掉原来的整个元素(包括子节点), 因此不建议使用
 

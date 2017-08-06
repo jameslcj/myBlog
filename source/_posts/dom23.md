@@ -68,3 +68,10 @@ newNode.getUserData("name");//James
 var iframe = document.getElementsById("myIframe");
 var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 ```
+
+## 样式
+- cssText 
+```
+var myDiv = document.getElementsByTagName("div")[0];
+myDiv.style.cssText = "font-size: 18px; background-color: red";
+```
