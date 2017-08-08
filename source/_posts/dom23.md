@@ -201,3 +201,35 @@ document.body.clientHeight;// 2874 最个文档高度
 ```
 document.documentElement.getBoundingClientRect()
 ```
+
+## 遍历
+### NodeIterator
+
+- document.createNodeIterator(起始节点, 要访问哪些节点的代码, nodeFilter对象, 是否要扩展实体引用)
+
+```
+var div = document.getElementById("div1");
+var iterator = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT, null, false);
+var node = iterator.nextNode();
+while (node !== null) {
+	console.log(node.tagName);
+	node = iterator.nextNode();
+}
+```
+
+### TreeWalker
+
+- document.createTreeWalk(起始节点, 要访问哪些节点的代码, nodeFilter对象, 是否要扩展实体引用)
+
+```
+var div = document.getElementById("div1");
+var filter = function(node) {
+	return node.tagName.toLowerCase() == 'li' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+}
+var iterator = document.createTreeWalk(div, NodeFilter.SHOW_ELEMENT, filter, false);
+var node = iterator.nextNode();
+while (node !== null) {
+	console.log(node.tagName);
+	node = iterator.nextNode();
+}
+```
