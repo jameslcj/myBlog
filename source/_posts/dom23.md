@@ -3,6 +3,12 @@ title: DOM2和DOM3
 date: 2017-08-05 14:18:55
 tags: javaScript高级程序设计笔记
 ---
+## 检测DOM等级方法
+- document.implementation.hasFeature(属性名, 等级)
+```
+document.implementation.hasFeature("MouseEvents", "2.0");//检测MouseEvents是否支持DOM2.0
+```
+
 ## DOM变化
 ### document类型的变化
 
