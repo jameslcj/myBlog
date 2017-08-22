@@ -77,5 +77,55 @@ if (drawing.getContext) {
 
 > 绘制好路径后, 如果想绘制一条链接到路径起点的线条, 可以调用 `closePath()`; 如果想填充路径, 可以调用`fill()`方法, 可以调用`stroke()`方法描边, 最后可以调用`clip()`, 这个方法可以在路径上创建一个剪切区域
 
+### 绘制文本
+- fillText(要绘制的文本字符串, x坐标, y坐标, 最大像素宽度)
+- strokeText(要绘制的文本字符串, x坐标, y坐标, 最大像素宽度)
+- font
+- textAlign
+- textBaseline 文本基线
 
+```
+ctx.font = 'bold 14px Arial';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText("xx", 100, 20);
+```
 
+### 变化
+- rotate(angle) 围绕原点逆时针旋转图像angle弧度
+- scale(scaleX, scaleY) 缩放图像
+- translate(x, y) 将坐标原点移动到(x, y); 执行变化后, 坐标(0, 0)会变成之前由(x, y)表示的点
+- transform(m1_1, m1_2, m2_1, m2_2, dx, dy) 直接修改变化矩阵, 方式乘以如下矩阵
+m1_1 m1_2 dx
+m2_1 m2_2 dy
+0    0    1
+- setTransform(m1_1, m1_2, m2_1, m2_2, dx, dy) 将变化矩阵重置为默认状态, 然后再调用transform()
+
+> fillStyle strokeStyle等属性, 如果不被修改, 在上下文中一直有效; 如果修改后, 想恢复刚才的上下文, 我们可以在修改前, 只有`save`方法把刚才的上下文推到`save`堆栈里, 需要恢复的时候再调用`restore`弹栈恢复
+
+- save() 
+- restore()
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext('2d');
+ctx.fillStyle = '#ff0000'
+ctx.save();
+ctx.fillStyle = '#00ff00';
+ctx.translate(100, 100);
+ctx.save();
+ctx.fillStyle = '#0000ff';
+ctx.fillRect(0, 0, 100, 200);
+ctx.restore();
+ctx.fillRect(10, 10, 100, 200);
+ctx.restore();
+```
+
+### 绘制图像
+- drwaImage(图片资源, 起点x, 起点y, [绘制宽度, 绘制高度, ...]) 总共可传9个参数, 可以控制截取源目标图片大小和区域, 在指定位置, 展现指定大小
+
+```
+var image = document.images[0];
+ctx.drwaImage(image, 10, 10)
+```
