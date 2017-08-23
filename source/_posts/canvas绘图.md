@@ -129,3 +129,95 @@ ctx.restore();
 var image = document.images[0];
 ctx.drwaImage(image, 10, 10)
 ```
+
+### 阴影
+- shadowColor
+- shadowOffsetX
+- shadowOffsetY
+- shadowBlur
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext('2d');
+ctx.shadowColor = '#ccc';
+ctx.shadowOffsetX = 5;
+ctx.shadowOffsetY = 5;
+ctx.shadowBlur = 4;
+ctx.fillStyle = '#ff0000';
+ctx.fillRect(10, 10, 50, 50)
+```
+
+### 渐变
+- createLinearGradient(起点x, 起点y, 终点x, 终点y)
+- addColorStop([0-1], 颜色)
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext('2d');
+var gradient = ctx.createLinearGradient(30, 30, 70, 70);
+gradient.addColorStop(0, 'white')
+gradient.addColorStop(1, 'black')
+ctx.fillStyle = gradient;
+ctx.fillRect(30, 30, 50, 50)
+```
+
+- createRadialGradient(x1, y1, r1, x2, y2, r2)
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext('2d');
+var gradient = ctx.createRadialGradient(30, 30, 10, 30, 30, 30);
+gradient.addColorStop(0, 'white')
+gradient.addColorStop(1, 'black')
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 60, 60)
+```
+
+### 模式
+- createPartern(img元素/video元素/其他canvas, repeat/no-repeat/repeat-x/repeat-y)
+
+### 使用图像数据
+- getImageData(x, y, width, height)
+- putImageData(imageData, x, y)
+
+### 合成
+- globalAlpha 值0-1, 指定绘制的透明度
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext('2d');
+
+ctx.globalAlpha = 0.5
+
+var gradient = ctx.createRadialGradient(30, 30, 10, 30, 30, 30);
+gradient.addColorStop(0, 'white')
+gradient.addColorStop(1, 'black')
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 60, 60)
+```
+
+- globalCompositeOperation 表示绘制的图形怎么和先绘制的图形结合 其值如下
+![对应的值](https://img.alicdn.com/tfs/TB10aVaXgoQMeJjy0FpXXcTxpXa-1944-1444.png)
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext('2d');var gradient = ctx.createLinearGradient(30, 30, 70, 70);
+gradient.addColorStop(0, 'white')
+gradient.addColorStop(1, 'black')
+ctx.fillStyle = gradient;
+ctx.fillRect(30, 30, 50, 50)
+
+ctx.globalCompositeOperation = 'destination-over'
+
+var gradient = ctx.createRadialGradient(30, 30, 10, 30, 30, 30);
+gradient.addColorStop(0, 'white')
+gradient.addColorStop(1, 'black')
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 60, 60)
+
+```
