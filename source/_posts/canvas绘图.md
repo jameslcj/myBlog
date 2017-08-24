@@ -221,3 +221,81 @@ ctx.fillStyle = gradient;
 ctx.fillRect(0, 0, 60, 60)
 
 ```
+
+## WebGL
+### 类型化数组
+```
+var buffer = new ArrayBuffer(20);
+// 获取大小字节
+var bytes = buffer.byteLength;
+```
+
+#### 视图
+- DataView(buffer, 开始位置, 要选字节数)
+
+```
+var buffer = new ArrayBuffer(20);
+
+//基于整个缓冲器创建一个视图
+var view = new DataView(buffer)
+
+//创建一个从字节9开始的视图
+var view = new DataView(buffer, 9)
+
+//创建一个从字节9开始到18字节的视图
+var view = new DataView(buffer, 9, 10)
+view.byteOffset; //9
+view.byteLength; //10
+```
+
+- setter和getter方法 第一个参数是一个字节偏移量, 最后一个参数是布尔值, 表示数据的最低有效位是否保存在高内存地址中
+![getter和setter方法](https://img.alicdn.com/tfs/TB1.8IrXgoQMeJjy1XaXXcSsFXa-1802-1362.png)
+
+```
+var buffer = new ArrayBuffer(20);
+var view = new DataView(buffer)
+view.setUnit16(0, 25);
+view.setUnit16(2, 50); //只能从2开始 因为16位占2个字节
+view.getUnit8(0);//0
+view.getUnit8(1);//25
+view.getUnit16(0);//25 一个性取2位, 以0位为高位 00000000 00011001
+view.getUnit16(1);//6400 因为它以1位为高位 00011001 00000000
+
+view.setUnit16(0, 25, true);
+view.getUnit8(0);//25
+view.getUnit8(1);//0
+```
+
+#### 类型化视图
+- 类型化数组 第一个参数为ArrayBuffer对象, 第二个参数为起点字节偏移量, 第三个参数包含的字节数
+![类型化数组](https://img.alicdn.com/tfs/TB1UFsBXogQMeJjy0FiXXXhqXXa-796-462.png)
+
+```
+var buffer = new ArrayBuffer(20);
+var int8s = new Int8Array(buffer)
+//从字节4开始
+var int16s = new Int16Array(buffer, 4)
+//从字节4到8字节
+var int16s = new Uint16Array(buffer, 4, 5)
+```
+
+- 不用先创建ArrayBuffer
+
+```
+//创建10个8位整数(10字节)
+var int8s = new Int8Array(10)
+//创建10个16位整数(20字节)
+var int8s = new Int16Array(10)
+
+//直接创建一个数组 保存4个8位整数
+var int8s = new Int8Array([1, 2, 3, 4]) //[1, 2, 3, 4]
+//越界
+var int8s = new Int8Array([1, 2, 129, 4])// [1, 2, -127, 4]
+```
+
+- subarray(开始元素的索引, 可选的结束索引) 基于底层数组缓冲器的子集创建一个新视图
+
+```
+var u = new Int16Array(10)
+u.subarray(2, 5)
+```
