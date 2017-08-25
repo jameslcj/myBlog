@@ -299,3 +299,51 @@ var int8s = new Int8Array([1, 2, 129, 4])// [1, 2, -127, 4]
 var u = new Int16Array(10)
 u.subarray(2, 5)
 ```
+
+### webgl上下文
+- getContext("webgl", 参数如下)
+
+![webgl参数](https://img.alicdn.com/tfs/TB1xr3vXmFRMKJjy0FhXXX.xpXa-1818-518.png)
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var gl = canvas.getContext("webgl", {alpha: false})
+```
+
+### 准备绘图
+> 先用实色清除cavas, 为绘图做准备
+
+- clearColor(r, g, b, o) 每个参数的值在0-1之间
+
+```
+document.body.innerHTML = `<canvas id="canvas" widht="500" height="500" ></canvas>`
+var canvas = document.getElementById("canvas");
+var gl = canvas.getContext('webgl');
+//设置颜色
+gl.clearColor(0, 0, 0, 1)
+//使用上面定义的颜色清楚
+
+### 视口与坐标
+
+> 视口坐标定义是以左下角为坐标原点; 视口内部的坐标系是以中心为原点, 右上是(1, 1), 左下为(-1, -1)
+
+- viewport(x, y, width, height)
+gl.clear(gl.COLOR_BUFFER_BIT) 
+```
+
+### 缓冲区
+> 顶点信息保存在JavaScript的类型化数组中, 使用之前必须先转换到WebGL的缓冲区; 在页面重载之前, 缓冲区始终保持在内存中, 或是调用`gl.deleteBuffer(buffer)`释放内存
+
+- bufferData 最后一个参数如下
+	+ gl.STATIC_DRAW 数据只加载一次, 在多次绘图中使用
+	+ gl.STREAM_DRAW 数据只加载一次, 在几次绘图中使用
+	+ gl.DYNAMIC_DRAW 数据动态改变, 在多次绘图中使用
+
+```
+var buffer = gl.createBuffer();
+//将buffer与webgl上下文绑定
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0.5, 1]), gl.STATIC_DRAW);
+gl.deleteBuffer(buffer);
+```
