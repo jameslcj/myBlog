@@ -300,7 +300,7 @@ var u = new Int16Array(10)
 u.subarray(2, 5)
 ```
 
-### webgl上下文
+#### webgl上下文
 - getContext("webgl", 参数如下)
 
 ![webgl参数](https://img.alicdn.com/tfs/TB1xr3vXmFRMKJjy0FhXXX.xpXa-1818-518.png)
@@ -311,7 +311,7 @@ var canvas = document.getElementById("canvas");
 var gl = canvas.getContext("webgl", {alpha: false})
 ```
 
-### 准备绘图
+#### 准备绘图
 > 先用实色清除cavas, 为绘图做准备
 
 - clearColor(r, g, b, o) 每个参数的值在0-1之间
@@ -324,7 +324,7 @@ var gl = canvas.getContext('webgl');
 gl.clearColor(0, 0, 0, 1)
 //使用上面定义的颜色清楚
 
-### 视口与坐标
+#### 视口与坐标
 
 > 视口坐标定义是以左下角为坐标原点; 视口内部的坐标系是以中心为原点, 右上是(1, 1), 左下为(-1, -1)
 
@@ -332,7 +332,7 @@ gl.clearColor(0, 0, 0, 1)
 gl.clear(gl.COLOR_BUFFER_BIT) 
 ```
 
-### 缓冲区
+#### 缓冲区
 > 顶点信息保存在JavaScript的类型化数组中, 使用之前必须先转换到WebGL的缓冲区; 在页面重载之前, 缓冲区始终保持在内存中, 或是调用`gl.deleteBuffer(buffer)`释放内存
 
 - bufferData 最后一个参数如下
@@ -346,4 +346,85 @@ var buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0.5, 1]), gl.STATIC_DRAW);
 gl.deleteBuffer(buffer);
+```
+
+#### 错误
+
+> webgl 不会主动抛出错误, 需要通过`getError()`方法获取
+
+```
+var error = gl.getError();
+console.log(error)
+```
+
+#### 着色器
+> 用的是GLSL语言, 一种类C语言
+> webgl有两种着色器: 顶点着色器和片段着色器 顶点着色器将3D顶点转换为需要渲染的2D. 片段着色器用于准备计算要绘制的每个像素颜色
+为着色器传递数据的方式有两种: Attribute和Uniform
+
+- Attribute 向顶点着色器传入顶点信息
+
+```
+// 定义了一个类型为vec2的aVertexPosition变量名
+attribute vec2 aVertexPosition;
+void main() {
+	//转换为3D  vec4 表示接受4个值 aVertexPosition是vec2类型 所有算2个值
+	gl_position = vec4(aVertexPosition, 0.0, 1.0);
+}
+```
+
+- Uniform 可以向任何着色器传入常量值
+
+```
+//
+uniform vec4 uColor;
+void main() {
+	//绘图时的颜色
+	gl_FragColor = uColor;
+}
+```
+
+#### 编写着色器程序
+> 因为浏览器不识别GLSL语法, 所以需要将其变成字符串进行转换
+
+- gl.createShader(gl.VERTEX_SHADER/gl.FRAGMENT_SHADER)
+
+
+```
+<script id="vertexShader">
+attribute vec2 aVertexPosition;
+void main() {
+	//转换为3D  vec4 表示接受4个值 aVertexPosition是vec2类型 所有算2个值
+	gl_position = vec4(aVertexPosition, 0.0, 1.0);
+}
+</script>
+var vertexShaderText = document.getElementById("vertexShader").text;
+var vertexShader = gl.createShader(gl.VERTEX_SHADER)
+gl.shaderSource(vertexShader, vertexShaderText);
+gl.compilShader(vertexShader)
+
+<script id="fragmentShader">
+attribute vec2 aVertexPosition;
+void main() {
+	//转换为3D  vec4 表示接受4个值 aVertexPosition是vec2类型 所有算2个值
+	gl_position = vec4(aVertexPosition, 0.0, 1.0);
+}
+</script>
+
+var fragmentShaderText = document.getElementById("fragmentShader").text;
+var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
+gl.shaderSource(fragmentShader, fragmentShaderText);
+gl.compilShader(fragmentShader)
+
+//创建程序
+var program = gl.createProgram()
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
+//将两个对象链接到着色器程序中
+gl.linkProgram(program)
+
+
+//通知webgl使用这个程序
+gl.useProgram(program);
+
 ```
