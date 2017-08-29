@@ -428,3 +428,18 @@ gl.linkProgram(program)
 gl.useProgram(program);
 
 ```
+
+#### 为着色器传入值
+```
+//找到内存地址
+var uColor = gl.getUniformLocation(program, "uColor");
+//给uColor赋值
+gl.uniform4fv(uColor, [0, 0, 0, 1]);
+
+//找到attribute在内存中的位置
+var aVertexPosition = gl.getAttribLocation(program, "aVertexPosition");
+//启用
+gl.enableVertexAttribArray(aVertexPosition);
+//创建指针, 指向gl.bindBuffer()指定的缓冲区, 并将其保存在aVertexPosition中, 以便顶点着色器使用
+gl.vertextAttribPointer(aVertexPosition, itemSize, gl.FLOAT, false, 0 , 0);
+```
