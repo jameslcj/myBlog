@@ -1,5 +1,5 @@
 ---
-title: canvas绘图
+title: canvas基本用法
 date: 2017-08-21 09:41:45
 tags: javaScript高级程序设计笔记
 ---
@@ -391,7 +391,7 @@ void main() {
 
 
 ```
-<script id="vertexShader">
+<script type="x-webgl/x-vertex-shader" id="vertexShader">
 attribute vec2 aVertexPosition;
 void main() {
 	//转换为3D  vec4 表示接受4个值 aVertexPosition是vec2类型 所有算2个值
@@ -401,9 +401,9 @@ void main() {
 var vertexShaderText = document.getElementById("vertexShader").text;
 var vertexShader = gl.createShader(gl.VERTEX_SHADER)
 gl.shaderSource(vertexShader, vertexShaderText);
-gl.compilShader(vertexShader)
+gl.compileShader(vertexShader)
 
-<script id="fragmentShader">
+<script type="x-webgl/x-fragment-shader" id="fragmentShader">
 attribute vec2 aVertexPosition;
 void main() {
 	//转换为3D  vec4 表示接受4个值 aVertexPosition是vec2类型 所有算2个值
@@ -414,7 +414,7 @@ void main() {
 var fragmentShaderText = document.getElementById("fragmentShader").text;
 var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
 gl.shaderSource(fragmentShader, fragmentShaderText);
-gl.compilShader(fragmentShader)
+gl.compileShader(fragmentShader)
 
 //创建程序
 var program = gl.createProgram()
@@ -442,4 +442,96 @@ var aVertexPosition = gl.getAttribLocation(program, "aVertexPosition");
 gl.enableVertexAttribArray(aVertexPosition);
 //创建指针, 指向gl.bindBuffer()指定的缓冲区, 并将其保存在aVertexPosition中, 以便顶点着色器使用
 gl.vertextAttribPointer(aVertexPosition, itemSize, gl.FLOAT, false, 0 , 0);
+```
+#### 调试着色器和程序
+
+```
+//编译成功返回true 否则返回false
+if (! gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+	//获取错误信息
+	alert(gl.getShaderInfoLog(vertexShader));
+}
+```
+
+#### 绘图
+> webgl只能绘制3种形状: 点, 线和三角
+
+- gl.drawArrays() 数组缓冲区
+- gl.drawElements 元素数组缓冲区
+![第一个参数选项](https://img.alicdn.com/tfs/TB1IRGuawoQMeJjy0FnXXb8gFXa-2022-1360.png)
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<canvas id="canvas" widht="500" height="500" ></canvas>
+</body>
+<script type="x-webgl/x-vertex-shader" id="vertexShader">
+attribute vec2 aVertexPosition;
+void main() {
+	//转换为3D  vec4 表示接受4个值 aVertexPosition是vec2类型 所有算2个值
+	gl_position = vec4(aVertexPosition, 0.0, 1.0);
+}
+</script>
+
+
+<script type="x-webgl/x-fragment-shader" id="fragmentShader">
+attribute vec2 aVertexPosition;
+void main() {
+	//转换为3D  vec4 表示接受4个值 aVertexPosition是vec2类型 所有算2个值
+	gl_position = vec4(aVertexPosition, 0.0, 1.0);
+}
+</script>
+<script type="text/javascript">
+var canvas = document.getElementById("canvas");
+var gl = canvas.getContext('webgl');
+var vertexShaderText = document.getElementById("vertexShader").text;
+var vertexShader = gl.createShader(gl.VERTEX_SHADER)
+gl.shaderSource(vertexShader, vertexShaderText);
+gl.compileShader(vertexShader)
+
+var fragmentShaderText = document.getElementById("fragmentShader").text;
+var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
+gl.shaderSource(fragmentShader, fragmentShaderText);
+gl.compileShader(fragmentShader)
+
+//创建程序
+var program = gl.createProgram()
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
+//将两个对象链接到着色器程序中
+gl.linkProgram(program)
+
+
+//通知webgl使用这个程序
+gl.useProgram(program);
+
+
+var vertices = new Float32Array([0, 1, 1, -1, -1, -1]),
+buffer = gl.createBuffer(),
+vertexSetSize = 2,
+vertexSetCount = vertices.length / vertexSetSize,
+uColor, aVertexPosition;
+
+//数据放到缓冲区
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+//为片段着色器传入颜色值
+uColor = gl.getUniformLocation(program, "uColor");
+gl.uniform4fv(uColor, [0, 0, 0, 1]);
+
+//为着色器传入顶点信息
+aVertexPosition = gl.getAttribLocation(program, "aVertexPosition");
+gl.enableVertexAttribArray(aVertexPosition);
+gl.vertexAttribPointer(aVertexPosition, vertexSetSize, gl.FLOAT, false, 0, 0);
+
+//绘制三角形
+gl.drawArrays(gl.TRIANGLES, 0, vertexSetCount);
+</script>
+</html>
 ```
