@@ -43,4 +43,65 @@ droptarget.ondragenter = function(event) {
 }
 ```
 
-### 
+### dataTransfer 对象
+> 在触发拖放事件时, 可以通过这个对象读取或者设置数据
+
+- dataTransfer.setData(text/URL, 'str');
+- dataTransfer.getData(text/URL)
+
+```
+event.dataTransfer.setData("text", "some text");
+var text = event.dataTransfer.getData("text");
+
+event.dataTransfer.setData("URL", "http://test.com");
+var url = event.dataTransfer.getData("URL");
+
+// 为了浏览器兼容 已写成如下
+var dataTransfer = event.dataTransfer;
+var url = dataTransfer.getData("url") || dataTransfer.getData("text/uri-list");
+var text = dataTransfer.getData("Text");
+```
+
+### dropEffect 与 effectAllowed
+![dropEffect 与 effectAllowed](https://img.alicdn.com/tfs/TB1Zg9sa_ZRMeJjSspkXXXGpXXa-1992-1412.png)
+
+### 可拖动
+> 设置`draggable="true"`
+
+```
+<div style="width: 100px;height: 100px;background-color:red;" draggable="true"></div>
+```
+
+### 其他成员
+
+![其他成员方法](https://img.alicdn.com/tfs/TB1YLiBa3MPMeJjy1XbXXcwxVXa-1938-1418.png)
+
+## 媒体元素
+```
+//视频
+<video src="video.mpg"></video>
+//音频
+<audio src="song.mp3"></audio>
+```
+
+> 不是所有浏览器都支持所有格式 可以使用`<source>`
+
+```
+<video>
+	<source src="video.webm" type="video/webm">
+	<source src="video.ogv" type="video/ogg">
+</video>
+```
+
+### 属性
+![属性](https://img.alicdn.com/tfs/TB1nzyya.gQMeJjy0FiXXXhqXXa-1408-1478.png)
+
+### 事件
+![事件](https://img.alicdn.com/tfs/TB1WR9Da3MPMeJjy1XbXXcwxVXa-1448-1310.png)
+
+## 历史状态管理
+> 现在很多页面都是利用hashchange事件, 改变页面, 所以我们可以通过监听此事件, 向history添加历史, 这样历史的前进和后退又可以用了
+
+- history.pushState(状体对象, 新状态的标题, 可选的相对url) 添加历史
+- history.popstate() 后退
+- history.replaceState(状体对象, 新状态的标题) 更新替换
