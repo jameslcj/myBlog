@@ -4,6 +4,7 @@ date: 2017-09-03 11:07:09
 tags: JavaScript
 ---
 ## angular.module 
+
 ```
 var module = angular.module('myApp', [依赖模块])
 ```
@@ -45,6 +46,7 @@ function($scope, $rootScope) {...}
 ====>
 ['$scope', '$rootScope', function(p1, p2) {...}]
 ```
+
 - `module.controller`
 - `module.run(['$rootScope', function(p){...}])`
     + run可以不用再dom上指定ng-controller 就可以控制全局变量
@@ -69,23 +71,25 @@ module.filter('myFilter', function() {
         - `A`: 属性指令
         - `C`: class属性
         - `M`: 注释替换
-        ```
-        <my-hello></my-hello>
-        <div my-hello></div>
-        <div class="my-hello"></div>
-        <!-- directive:my-hello -->
-        module.directive('myHello', function() {
-            return {
-                restrict: 'EACM',
-                replace: true,
-                transclude: true,
-                controller: ['$scope', function($scope) {
-                    this.tips = 'hello world'
-                }],
-                template: '<div>Hello world <h1 ng-transclude></h1></div>'
-            }
-        })
-        ```
+
+```
+<my-hello></my-hello>
+<div my-hello></div>
+<div class="my-hello"></div>
+<!-- directive:my-hello -->
+module.directive('myHello', function() {
+    return {
+        restrict: 'EACM',
+        replace: true,
+        transclude: true,
+        controller: ['$scope', function($scope) {
+            this.tips = 'hello world'
+        }],
+        template: '<div>Hello world <h1 ng-transclude></h1></div>'
+    }
+})
+```
+
     + place
     + template: 模板标签
     + templateUrl: 模板文件 会用ajax 去请求
@@ -95,64 +99,67 @@ module.filter('myFilter', function() {
             + `@`: 替换为变量
             + `=`: 替换为作用域变量(非自身controller作用域)
             + `&`: 替换为函数(非自身controller作用域)
-    ```
-    <my-tab aaa="div1" my-name="name" my-fn="show(num)"></my-tab>
-        <my-tab aaa="div2" my-name="name" my-fn="show(num)"></my-tab>
-    module.directive('myTab', function() {
-        return {
-            restrict: 'E',
-            replace: true,
-            templateUrl: './tmp1.html',
-            scope: {
-                myId: '@aaa',
-                myName: '=',
-                myFn: '&'
-            },
-            controller: ['$scope', function($scope) {
-                $scope.name = 'mytab'
-            }],
-            link: function(scope, element, attr) {
-                element.delegate('input', 'click', function() {
-                    $(this).attr('class', 'active').siblings().attr('class', '')
-                    $(this).siblings('div').css({'display': 'none'}).siblings('div').eq($(this).index()).css({'display': 'block'})
-                })
-            }
+
+```
+<my-tab aaa="div1" my-name="name" my-fn="show(num)"></my-tab>
+    <my-tab aaa="div2" my-name="name" my-fn="show(num)"></my-tab>
+module.directive('myTab', function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: './tmp1.html',
+        scope: {
+            myId: '@aaa',
+            myName: '=',
+            myFn: '&'
+        },
+        controller: ['$scope', function($scope) {
+            $scope.name = 'mytab'
+        }],
+        link: function(scope, element, attr) {
+            element.delegate('input', 'click', function() {
+                $(this).attr('class', 'active').siblings().attr('class', '')
+                $(this).siblings('div').css({'display': 'none'}).siblings('div').eq($(this).index()).css({'display': 'block'})
+            })
         }
-    })
-    //./tmp1.html
-    <input class="active" type="button" value="1" ng-click="myFn({num:123})">
-    ```
+    }
+})
+//./tmp1.html
+<input class="active" type="button" value="1" ng-click="myFn({num:123})">
+```
+
     - link: 对自身的操作
     - controller: 当对`this`挂载数据时, 就实现了与其他自定义指令, 进行数据共享
     - transclude: 当为true时保留子模板
     - require: 引入其他自定义指令
         + `?`防止报错
         + `^`向上级查找
-    ```
-    <my-hello><my-hi></my-hi></my-hello>
-    module.directive('myHello', function() {
-        return {
-            restrict: 'EACM',
-            replace: true,
-            transclude: true,
-            controller: ['$scope', function($scope) {
-                this.tips = 'hello world'
-            }],
-            template: '<div>Hello world <h1 ng-transclude></h1></div>'
+    
+```
+<my-hello><my-hi></my-hi></my-hello>
+module.directive('myHello', function() {
+    return {
+        restrict: 'EACM',
+        replace: true,
+        transclude: true,
+        controller: ['$scope', function($scope) {
+            this.tips = 'hello world'
+        }],
+        template: '<div>Hello world <h1 ng-transclude></h1></div>'
+    }
+})
+module.directive('myHi', function() {
+    return {
+        restrict: 'EACM',
+        replace: true,
+        require: '?^myHello',
+        template: '<span>hi world</span>',
+        link: function(scope1, element1, attr, reController) {
+            console.log(reController.tips)
         }
-    })
-    module.directive('myHi', function() {
-        return {
-            restrict: 'EACM',
-            replace: true,
-            require: '?^myHello',
-            template: '<span>hi world</span>',
-            link: function(scope1, element1, attr, reController) {
-                console.log(reController.tips)
-            }
-        }
-    })
-    ```
+    }
+})
+```
 
 - module.config 服务商 根据配置信息用于初始化操作 
     + 参数+Provider
@@ -186,6 +193,7 @@ module.controller('test', ['$scope', 'myService', function ($scope, myService){
 module.service('myServiceObj', myServiceObjFn);
 function myServiceObjFn() {
     this.name = 'myServiceObjFn'
+
 }
 myServiceObjFn.prototype.age = 18
 ```
@@ -241,12 +249,13 @@ fn.prototype.name = 'fnObj'
 - ng-click 点击事件
     + 可以直接修改$scope上的变量 ==> `ng-click="name='aa'"`
     + 也可以在$scope上绑定一个方法再调用
-    ```
-    ng-click="changeName()"
-    $scope.changeName = function() {
-            $scope.name = 'name'
-        }
-    ```
+
+```
+ng-click="changeName()"
+$scope.changeName = function() {
+        $scope.name = 'name'
+    }
+```
 - ng-model 双向绑定
     + `ng-model="name"` 与name变量绑定在一起, name变量的变化会影响绑定对象
     
@@ -292,6 +301,7 @@ fn.prototype.name = 'fnObj'
     + even 是否偶数
     + odd 是否奇数
     + ng-repeat-start ng-ng-repat-end 两者要配合使用 数据将会在这区间有效输出
+
 ```
 <ul>
     <li ng-repeat="item in items">{{item.data}}</li>
@@ -354,14 +364,15 @@ $scope.test = "<h1>hello</h1>"
     + 不解析便签 
 - ng-class
     + 添加class
-    + 也可以使用$scope变量, 但变量要用`{{}}`包裹起来
+    + 也可以使用`$scope`变量, 但变量要用`\{\{\}\}`包裹起来
+
 ```
 <div ng-class="{class名: true, class名2: true}"><div>
 ```
 - ng-style
     + 可以直接设置样式
-    + 使用的对象方式 {color: 'red'}
-    + 也可以使用$scope变量, 但变量要用`{{}}`包裹起来
+    + 使用的对象方式 `{color: 'red'}`
+    + 也可以使用$scope变量, 但变量要用`\{\{\}\}`包裹起来
 
 ```
 $scope.style = "{color: 'red', background: 'blue'}"
@@ -371,7 +382,7 @@ $scope.style = "{color: 'red', background: 'blue'}"
 - ng-src
 - ng-attr-属性名
     + 例如: ng-attr-id
-- ng-show 显示 ng-show="true"
+- ng-show 显示 `ng-show="true"`
 - ng-hide 隐藏
 - ng-if
     + 功能和`ng-show`类似
@@ -387,12 +398,14 @@ $scope.style = "{color: 'red', background: 'blue'}"
 ```
 - ng-open 与detail关联使用
 - ng-init 初始化变量, 不用先在$scope上挂载
+
 ```
 <div ng-init="init='hello'">{{init}}</div>
 ```
 - ng-include 引入其他 模块
 
 ### angular重装标签
+
 ```
 var module = angular.module('myApp', ['ngSanitize']);
 module.controller('test2', ['$scope', fn]);
@@ -500,6 +513,7 @@ alert($filter('limitTo')('hello', 2))
 
 ### $http 类似ajax的http请求
 - 当`method: 'jsonp'`时, `JSON_CALLBACK`为回调函数名
+
 ```
 $scope.searchByBaidu = function() {
     $timeout.cancel(timer);
@@ -536,6 +550,7 @@ console.log(cache.info, cache.get('name'), cache.get('age'))
 ```
 ### $log 功能与console类似
 ### $interpolate 插值替换
+
 ```
 <input type="text"  ng-model="name">
 <textarea ng-model="body"></textarea>
@@ -550,6 +565,7 @@ $scope.$watch('body', function(newBody) {
 })
 ```
 ### $q 跟jquery的primise类似
+
 ```
 var dfd = $q.defer();
 function getPromise() {
@@ -619,7 +635,7 @@ console.log(result)// ["0a", "1b"]
 > 可以使用管道方式调用多个过滤器 如: num | limitTo: 2 | uppercase
 
 - `currency:'¥'` 货币过滤器
-    + `{{goods.price * goods.amount | currency}}` `| currency`是过滤器, 转换为货币格式
+    + `\{\{goods.price * goods.amount | currency\}\}` `| currency`是过滤器, 转换为货币格式
 - number 每3位一个逗号
 - uppercase/lowercase
 - json 将json格式化
@@ -656,6 +672,7 @@ module.controller('testPropagation', function($scope) {
 ```
 ## 插件
 ### ng-route
+
 ```
 <div ng-controller="myController">
         <a href="" ng-click="$location.path('/aaa/123')">首页123</a>
