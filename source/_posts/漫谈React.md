@@ -88,3 +88,55 @@ class OtherComp extends Component {
 	}
 }
 ```
+
+## 高阶组件
+### 属性代理
+```
+import React, { Component } from 'React';
+const MyContainer = (WrappedComponent) => 
+	class extends Component {
+	render() {
+		const newProps = {
+			text: newText, 
+		};
+		return <WrappedComponent {...this.props} {...newProps} />; 
+	}
+}
+```
+
+```
+import React, { Component } from 'React';
+const MyContainer = (WrappedComponent) =>
+	class extends Component {
+		constructor(props) { 
+			super(props); 
+			this.state = {
+		  		name: '',
+		  	};
+			this.onNameChange = this.onNameChange.bind(this); 
+		}
+
+		onNameChange(event) { 
+			this.setState({
+				name: event.target.value, 
+			})
+		}
+		render() {
+			const newProps = {
+				name: {
+					value: this.state.name,
+					onChange: this.onNameChange,
+				}, 
+			}
+			return <WrappedComponent {...this.props} {...newProps} />; 
+		}
+}
+
+@MyContainer
+class MyComponent extends Component {
+	render() {
+		return <input name="name" {...this.props.name} />;
+	} 
+}
+```
+> 通过以上的封装，我们就得到了一个被控制的 input 组件。
