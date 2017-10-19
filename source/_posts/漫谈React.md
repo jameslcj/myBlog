@@ -140,3 +140,16 @@ class MyComponent extends Component {
 }
 ```
 > 通过以上的封装，我们就得到了一个被控制的 input 组件。
+
+### 反向代理
+> 高阶组件集成传递进来的组件WrappedComponent, 然后通过super去反向调用
+
+```
+const MyContainer = (WrappedComponent) => 
+	class extends WrappedComponent {
+		render() {
+			return super.render();
+		} 
+	}
+}
+```
