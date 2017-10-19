@@ -90,6 +90,75 @@ numbersCloseEnoughToEqual( a, b );
 > 如上得知, js的小数计算结果有偏差, 所以可以使用`Number.EPSILON`来计算是否相等
 
 ```
-Math.MAX_VALUE;//1.798e+308
-Math.MIN_VALUE;//5e-324
+Number.MAX_VALUE;//1.798e+308
+Number.MIN_VALUE;//5e-324
+Number.MAX_SAFE_INTEGER;//9007199254740991= 2^53 - 1
+Number.MIN_SAFE_INTEGER;//-9007199254740991
 ```
+> js整数最大用53位表示, 所以如果计算64位数时需要额外引入库
+
+```
+Number.isInteger( 42 );     // true
+Number.isInteger( 42.000 ); // true
+Number.isInteger( 42.3 );   // false
+```
+
+## undefined
+> undefined是一个标识符, 而null是关键字
+
+```
+function foo() {
+    "use strict";
+    var undefined = 2;
+    console.log( undefined ); // 2
+}
+foo()
+```
+
+```
+var foo = void 0;
+foo;//undefined
+```
+> 可以通过void获取undefined值, void _ 会一直返回undefined值
+
+## NaN - Not a Number
+```
+typeof NaN // number
+
+NaN == NaN; //undefined
+```
+
+```
+isNaN(NaN); //true
+isNaN(1); //false
+isNaN('1'); //false
+isNaN('hello'); //true
+```
+> 以上得知, isNaN是用来判别是不是数字, 如果不是数字就返回true, 否则就是true
+
+```
+Number.isNaN(NaN); //true
+Number.isNaN(1); //false
+Number.isNaN('1'); //false
+Number.isNaN('hello'); //false
+```
+> es6提供的`Number.isNaN`修复了这个问题
+
+```
+if (!Number.isNaN) {
+        Number.isNaN = function(n) {
+            return (
+                typeof n === "number" &&
+                window.isNaN( n )
+			); 
+		};
+}
+
+if (!Number.isNaN) {
+	 Number.isNaN = function(n) {
+	 	//只有NaN不等于自身
+        return n !== n;
+    };
+}
+```
+> 两种es6 isNaN的polyfill
