@@ -162,3 +162,62 @@ if (!Number.isNaN) {
 }
 ```
 > 两种es6 isNaN的polyfill
+
+### Zeros
+> js里有0和-0, 它的用处不是很大, 但是在某些运动时刻, 可以通过正负值, 来判断运动方向
+
+```
+var a = 0 / -3; // -0
+var b = 0 * -3; // -0
+
+a.toString(); //"0"
+a + ""; //"0"
+String( a ); //"0"
+
+JSON.stringify( a );   // "0"
+JSON.parse( "-0" ); // -0
+
+Number( "-0" );     // -0
+
+-0 === 0;//true
+```
+
+```
+function isNegZero(n) {
+    n = Number( n );
+    return (n === 0) && (1 / n === -Infinity);
+}
+isNegZero( -0 );// true
+isNegZero( 0 / -3 );// true
+isNegZero( 0 );// false
+```
+> 可以通过上面的方法判断是否为负0
+
+### Special Equality
+> es6提供的提供了`Object.is`方法可以来判断两值是否相等
+```
+var a = 2 / "foo";
+var b = -3 * 0;
+
+Object.is( a, NaN ); //true
+Object.is( b, -0 ); //true
+Object.is( b, 0 ); // false
+```
+
+```
+if (!Object.is) {
+        Object.is = function(v1, v2) {
+            // test for `-0`
+            if (v1 === 0 && v2 === 0) {
+                return 1 / v1 === 1 / v2;
+            }
+            // test for `NaN`
+            if (v1 !== v1) {
+                return v2 !== v2;
+            }
+            // everything else
+            return v1 === v2;
+        };
+}
+```
+> polyfill如上
