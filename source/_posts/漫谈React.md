@@ -140,3 +140,129 @@ class MyComponent extends Component {
 }
 ```
 > 通过以上的封装，我们就得到了一个被控制的 input 组件。
+
+### 反向代理
+> 高阶组件集成传递进来的组件WrappedComponent, 然后通过super去反向调用
+
+```
+const MyContainer = (WrappedComponent) => 
+	class extends WrappedComponent {
+		render() {
+			return super.render();
+		} 
+	}
+}
+```
+
+## 组件性能优化
+### PureRender
+```
+<Account style={{ color: 'black' }} />
+
+//优化为如下
+
+const defaultStyle = {{color: 'black'}};
+<Account style={this.props.style || defaultStyle} />
+```
+
+> 如上, 我们知道，每次调用 React 组件其实都会重新创建组件。就算传入的数组或对象的值没有改变, 但它引用的地址改变, 因此对象和数组类型的数据, 应该用一个变量传入
+
+```
+class NameItem extends Component { 
+	render() {
+		//翻译成jsx为: <Item children={React.createElement('span', {}, 'Arcthur')}/>
+		return ( <Item>
+			<span>Arcthur</span> <Item/>
+		 )
+	}
+}
+
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+class NameItem extends Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this); 
+	}
+	render() { 
+		return ( <Item>
+			<span>Arcthur</span> </Item>
+		); 
+	}
+}
+```
+> 如上, Item 组件不论什么情况下都会重新渲染。那么，怎么避免 Item 组件的重复渲染呢? 很简单，我们给 NameItem 设置 PureRender
+
+### Immutable
+> Immutable提供了很多类似es6工具方法, 它最大的亮点是提供了Map(对象), List(数据)这2个方法, 它可以得到不会被改变的对象和数组, 就可以防止数据被在某些黑盒里修改
+
+```
+let a = Map({
+	select: 'users',
+	filter: Map({ name: 'Cam' }),
+});
+let b = a.set('select', 'people');
+a === b // false
+
+let map1 = Immutable.Map({a:1, b:1, c:1}); 
+let map2 = Immutable.Map({a:1, b:1, c:1}); 
+map1 === map2; // => false
+Immutable.is(map1, map2); // => true
+```
+> 以上为Immutable的map简单用法, Immutable.is 比较的是两个对象的 hashCode 或 valueOf(对于 JavaScript 对象)。由于 Immutable 内部使用了 trie 数据结构来存储，只要两个对象的 hashCode 相等，值就是一样的。 这样的算法避免了深度遍历比较，因此性能非常好。
+
+```
+import React, { Component } from 'react'; 
+import { is } from 'immutable';
+
+class App extends Component { 
+	shouldComponentUpdate(nextProps, nextState) {
+		const thisProps = this.props || {};
+		const thisState = this.state || {};
+
+		if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+			return true; 
+		}
+
+		for (const key in nextProps) {
+			if (nextProps.hasOwnProperty(key) && !is(thisProps[key], nextProps[key])) { 
+				return true;
+			} 
+		}
+
+		for (const key in nextState) {
+			if (nextState.hasOwnProperty(key) && !is(thisState[key], nextState[key])) { 
+				return true;
+			} 
+		}
+		
+		return false; 
+	}
+}
+```
+> 如上优化shouldComponentUpdate, Immutable.js提供了简洁、高效的判断数据是否变化的方法，只需 === 和 is 比较就能知 道是否需要执行 render，而这个操作几乎零成本，所以可以极大提高性能
+
+### key
+> 我们迭代渲染数组时, 如果不给组件设置key或是设置了相同的key会有警告, 但是设置的key, 尽量根据组件自身属性而产生的唯一性key, 比如id, 尽量避免使用数组的key, 这样效率会很低, 因为所有组件基本都会重新渲染
+
+
+```
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
+function Rank({ first, second }) { 
+	const children = createFragment({
+		first: first,
+		second: second, 
+	});
+	return ( <ul>{children} </ul>);
+}
+```
+> 关于 key，我们还需要知道的一种情况是，有两个子组件需要渲染的时候，我们没法给它们
+设 key。这时需要用到 React 插件 createFragment 来解决, 如上
+
+### react-addons-perf 性能检测工具
+> 通过 Perf.start() 和 Perf.stop() 两个 API 设置 开始和结束的状态来作分析
+
+- Perf.printInclusive(measurements):所有阶段的时间。 
+- Perf.printExclusive(measurements):不包含挂载组件的时间，即初始化 props、state，调用 componentWillMount 和 componentDidMount 方法的时间等。
+- Perf.printWasted(measurements):监测渲染的内容保持不变的组件(可以查看哪些组件
+没有被 shouldComponentUpdate 命中)。
