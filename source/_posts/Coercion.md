@@ -154,3 +154,14 @@ a + ""; // "42"
 String( a );    // "4"
 ```
 > 以上两者转换是有区别的, `a + ""`这种形式会优先调用`valueOf`方法, 而`String()`直接调用`toString`方法
+
+## Loose Equals Versus Strict Equals
+> 我们经常会说`==`表示检测两者的值否是相等, `===`表示检测两者的值相等的同时再检测类型是否相同, 这种说法不是完全正确, 正确理解应该是, `==`会将两值转换成同一类型再进行比较, 而`===`不会将两值类型做转换而直接进行比较
+> 当一个`String`类型和一个`Number`类型进行`==`比较, `String`类型会转换为`Number`
+
+```
+var num = 42;
+num == true;//false ==> 42 == Number(true) ==> 42 == 1
+num == false;//false ==> 42 == Number(false) ==> 42 == 0
+```
+> 上面的比较结果居然都是`false`, 据我们上面分析得知, 42被转换为布尔值为`true`, 但实际上, 当一个`Number`类型和一个`Boolean`类型做比较时, `Boolean`类型会被转换成`Number`类型
