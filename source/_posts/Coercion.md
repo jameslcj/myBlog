@@ -165,3 +165,10 @@ num == true;//false ==> 42 == Number(true) ==> 42 == 1
 num == false;//false ==> 42 == Number(false) ==> 42 == 0
 ```
 > 上面的比较结果居然都是`false`, 据我们上面分析得知, 42被转换为布尔值为`true`, 但实际上, 当一个`Number`类型和一个`Boolean`类型做比较时, `Boolean`类型会被转换成`Number`类型
+
+```
+var str = "42"
+num == true;//false ==> Number("42") == Number(true) ==> 42 == 1
+num == false;//false ==> Number("42") == Number(false) ==> 42 == 0
+```
+> 当2个非数字类型的变量进行比较时, 两者都会转换成`Number`类型再进行比较
