@@ -61,7 +61,7 @@ var num2 = false + 1; //0 + 1 = 1
 var num3 = undefined + 1; //NaN + 1 = NaN
 var num4 = null + 1; // 0 + 1 = 1
 ```
-> 综上可知, `true, false, undefined, null`在数学计算中, 强转后的数值不一, 格外需要注意的是`undefined`会被转换为`NaN`
+> 综上可知, `true, false, undefined, null`在数学计算中, 强转后的数值不一, 格外需要注意的是`undefined`和非空字符串会被转换为`NaN`
 
 ```
  var a = {
@@ -177,7 +177,7 @@ num == false;//false ==> Number("42") == Number(false) ==> 42 == 0
 ```
 null == undefined;//true
 ```
-> 只有以上情况, 会返回`true`, 这两者与其他类型比较都是返回`false`
+> `null`和`undefined`这两者与其他类型比较都是返回`false`, 只有以上情况, 会返回`true`,
 
 ### Comparing: objects to nonobjects
 ```
@@ -211,13 +211,14 @@ if (a == 2 && a == 3) {
     console.log( "Yep, this happened." );
 }
 ```
+> 以上`if`结果是`true`
 
 ```
 "0" == false; //true 两者类型不同, 都会转换成Number类型再进行比较
 "0" == ""; //false 都是字符串类型, 不进行转换直接比较
 
-false == []; //true
-false == {}; //false
+false == []; //true //转换成数字类型再进行比较
+false == {}; //false //转换成数字类型再进行比较
 
 "" == []; //true
 "" == {}; //false
@@ -230,7 +231,7 @@ false == {}; //false
 ```
 [] == ![]; //true 
 ```
-> 非常奇怪, 上面结果是`true`, 因为上面的转换规则如下 `==> [] == false ==> true `
+> 非常奇怪, 上面结果是`true`, 因为上面的转换规则如下 `==> [] == false ==> ==> Number([]) == Number(false) ==> 0 == 0 ==> true `
 
 ```
 2 == [2];       // true  Number([2]) ==> 2
@@ -242,3 +243,22 @@ false == {}; //false
 0 == "\n" //==> 0 == Number("\n") ==> 0 == 0
 ```
 
+### Abstract Relational Comparison
+```
+[42] < ["43"]; //true
+["42"] < ["043"]; //false
+```
+> 上面第一条是可以理解的, 第二条是因为两者都是字符串数组, 所以就转换成字符串比较, 字符串比较是按位比较的, 他们各自的第一位分别是4与0, 所有`["42"] > ["043"]`
+
+```
+var a = { b: 42 };
+var b = { b: 43 };
+
+a < b;  // false
+a == b; // false
+a > b;  // false
+
+a <= b; // true
+a >= b; // true
+```
+> 上面真是个奇怪的现象, 为什么会这样呢? 因为js判断`a <= b`的时候其实是转换成`!(a>b)` 判断`a>=b`的时候其实是转换成`!(a<b)`
