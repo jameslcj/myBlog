@@ -172,3 +172,73 @@ num == true;//false ==> Number("42") == Number(true) ==> 42 == 1
 num == false;//false ==> Number("42") == Number(false) ==> 42 == 0
 ```
 > 当2个非数字类型的变量进行比较时, 两者都会转换成`Number`类型再进行比较
+
+### Comparing: nulls to unde neds
+```
+null == undefined;//true
+```
+> 只有以上情况, 会返回`true`, 这两者与其他类型比较都是返回`false`
+
+### Comparing: objects to nonobjects
+```
+var a = 42;
+var b = [42];
+a == b; //true
+```
+> 以上结果得知, 所有对象类型与原始标量类型做比较时, 对象类型都会被转换成原始标量类型再进行比较
+
+### Edge Cases
+> 一些比较奇怪的bug
+
+```
+Number.prototype.valueOf = function() {
+    return 3;
+};
+new Nubmer( 2 ); //2 
+new Number( 2 ) == 3;   // true
+new Number( 2 ) == 2;   // false
+```
+> 上面是比较奇怪的`bug`, 返回是2, 但是与2不相等
+
+```
+
+var i = 2;
+    Number.prototype.valueOf = function() {
+        return i++;
+};
+var a = new Number( 42 );
+if (a == 2 && a == 3) {
+    console.log( "Yep, this happened." );
+}
+```
+
+```
+"0" == false; //true 两者类型不同, 都会转换成Number类型再进行比较
+"0" == ""; //false 都是字符串类型, 不进行转换直接比较
+
+false == []; //true
+false == {}; //false
+
+"" == []; //true
+"" == {}; //false
+
+0 == []; //true
+0 == {}; //false
+```
+> 上面为何 `[]``{}` 比较结果不一样呢? 因为`Number([]) === 0` `Number({})`结果为NaN; `String([]) === ''` `String({}) === [object Object]`
+
+```
+[] == ![]; //true 
+```
+> 非常奇怪, 上面结果是`true`, 因为上面的转换规则如下 `==> [] == false ==> true `
+
+```
+2 == [2];       // true  Number([2]) ==> 2
+"" == [null];   // true  String([null]) ==> ""
+```
+> 上面, 只要按照对象类型与原始类型比较时, 对象类型会被转换成原始类型再进行比较
+
+```
+0 == "\n" //==> 0 == Number("\n") ==> 0 == 0
+```
+
