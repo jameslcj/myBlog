@@ -73,3 +73,66 @@ for (var v of it) {
  */
 ```
 > 当我们调用迭代器it的return方法时, 迭代器会将it.next的结果done设置为true, 来终端迭代器迭代下去, 然后会执行迭代器里的finally方法(如果有), 最后返回的value的值等于我们return传递进去的值
+
+
+```
+function ajax(delay) {
+    return new Promise(function(resolve, reject) {
+        //延迟返回 模拟异步
+        setTimeout(() => {
+            resolve("ajax data");
+        }, delay)
+    })
+}
+
+function *test(arg) {
+    var ajaxRes = yield ajax(arg);
+    return yield ajaxRes;
+}
+/**
+ * 模拟co库写的一个迭代器递归执行方法
+ **/
+function co(gen) {
+    //获取初始化参数
+    var args = [].slice.call(arguments, 1);
+    //使用当前作用域初始化gen获取迭代器对象it, 下面it会作为一个闭包对象一直被递归调用
+    var it = gen.apply(this, args);
+    //返回一个处理好的promise
+    return Promise.resolve().then(function handleNext(value) {
+        //将上一次promise返回的结果作为参数传递给迭代器, 第一次value为undefined, 一般浏览器会忽略
+        var next = it.next(value);
+        console.log("next: ", next);
+        
+        //函数自运行
+        return (function handleResult(next) {
+            //判断迭代器是否完成 如果完成返回最后结果
+            if (next.done) {
+                return next.value;
+            } else {
+                //否则就递归调用迭代器
+                //通过promise处理next.value, 如果next.value是非promise对象就会直接进入then, 否则就等待promise回调then
+                //这里的next.value一般都是异步处理, 例如ajax操作
+                return Promise.resolve(next.value).then(
+                    //如果promise返回成功, 就递归调用handleNext来处理it迭代器至完成
+                    handleNext,
+					
+                    //异常处理
+                    function handleErr(err) {
+                        return Promise.resolve(
+                            //处理异常
+                            it.throw(err)
+                        ).then(
+                            //继续处理异常处理的结果
+                            handleResult
+                        )
+                    }
+                );
+            }
+        })(next)
+    })
+}
+co(test, 3000).then(function(res) {
+    console.log("res: ",res)
+});
+```
+> 上面是一个自动递归处理迭代器的方法, 方法类似co库
