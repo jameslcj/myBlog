@@ -136,3 +136,38 @@ co(test, 3000).then(function(res) {
 });
 ```
 > 上面是一个自动递归处理迭代器的方法, 方法类似co库
+
+```
+funcion *foo() {
+	var r1 = yield ajax('url1');
+	var r2 = yield ajax('url2');
+
+	var r3 = yield ajax(r1+r2);
+	return r3;
+}
+co(foo);
+
+//可以优化为下面
+funcion *foo() {
+
+	var p1 = ajax('url1');
+	var p2 = ajax('url2');
+	var r1 = yield p1
+	var r2 = yield p2
+
+	var r3 = yield ajax(r1+r2);
+	return r3;
+}
+co(foo);
+// 上面那方法可以理解如下
+funcion *foo() {
+	var results = yield Promise.all([ajax('url1'), ajax('url2)]);
+	var r1 = results[0];
+	var r2 = results[1];
+
+	var r3 = yield ajax(r1+r2);
+	return r3;
+}
+co(foo);
+```
+> 上面第一个demo, 按照迭代器的方式, 必须等r1的ajax返回结果后, 才会调用r2的ajax, 这样效率就会很低, 所以应该优化为下面那方法, 这样就可以先直接发送2个ajax请求并发, 处理结果使用迭代器
