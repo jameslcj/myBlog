@@ -108,7 +108,35 @@ function co(gen) {
             //判断迭代器是否完成 如果完成返回最后结果
             if (next.done) {
                 return next.value;
-            } else {
+            } else if (typeof next.value == 'function') {
+				//处理thunk类型的回调
+				//返回一个promise
+				return new Promise(function(resolve, reject) {
+					//给thunk传递回调函数
+					next.value(function(err, msg) {
+						if (err) {
+							reject(err);
+						} else {
+							resolve(msg);
+						}
+					})
+				}).then(function() {
+                    //如果promise返回成功, 就递归调用handleNext来处理it迭代器至完成
+                    handleNext,
+
+                    //异常处理
+                    function handleErr(err) {
+                        return Promise.resolve(
+                            //处理异常
+                            it.throw(err)
+                        ).then(
+                            //继续处理异常处理的结果
+                            handleResult
+                        )
+                    }
+
+				})
+			} else {
                 //否则就递归调用迭代器
                 //通过promise处理next.value, 如果next.value是非promise对象就会直接进入then, 否则就等待promise回调then
                 //这里的next.value一般都是异步处理, 例如ajax操作
