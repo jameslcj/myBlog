@@ -3,6 +3,7 @@ title: Generators
 date: 2017-12-02 14:17:01
 tags: You Don't Know JS
 ---
+## 迭代器
 ```
 function *foo(x) {
 	var y = x * (yield function() {return "hello world";}); 
@@ -74,6 +75,8 @@ for (var v of it) {
 ```
 > 当我们调用迭代器it的return方法时, 迭代器会将it.next的结果done设置为true, 来终端迭代器迭代下去, 然后会执行迭代器里的finally方法(如果有), 最后返回的value的值等于我们return传递进去的值
 
+
+## 自动执行迭代器
 
 ```
 function ajax(delay) {
@@ -199,3 +202,91 @@ funcion *foo() {
 co(foo);
 ```
 > 上面第一个demo, 按照迭代器的方式, 必须等r1的ajax返回结果后, 才会调用r2的ajax, 这样效率就会很低, 所以应该优化为下面那方法, 这样就可以先直接发送2个ajax请求并发, 处理结果使用迭代器
+
+## 迭代器的polyfill
+
+```
+function *foo(url) {
+	// STATE *1*
+	try {
+		console.log( "requesting:", url );
+		var TMP1 = request( url );
+
+		// STATE *2*
+		var val = yield TMP1;
+		console.log( val );
+	} catch (e) {
+		// STATE *3*
+		console.log( "Oops:", err );
+		return false;
+	}
+}
+
+//polyfill 如下
+
+function foo(url) {
+	// manage generator state
+	var state;
+
+	// generator-wide variable declarations
+	var val;
+	
+	function process(v) {
+		switch (state) {
+			case 1: 
+				console.log( "requesting:", url );
+				return request( url );  
+			case 2:
+				val = v;
+				console.log( val );
+			case 3:
+				var err = v;
+				console.log( "Oops:", err );
+				return false;
+		}
+	}
+
+	return {
+		next: function(v) {
+			// initial state
+			if (!state) { 
+				state = 1;
+				return {
+					done: false,
+					value: process()
+				};
+			// yield resumed successfully
+			} else if (state == 1) {
+				state = 2;
+				return {
+					done: true,
+					value: process( v )
+				};
+			}
+			// generator already completed
+			else { 
+				return {
+					done: true,
+					value: undefined
+				};
+			}
+		},
+		throw: function(e) {
+			// the only explicit error handling is in 
+			// state *1*
+			if (state == 1) {
+				state = 3; 
+				return {
+					done: true,
+					value: process( e )
+				};
+			}
+			// otherwise, an error won't be handled, 
+			// so just throw it right back out
+			else {
+				throw e; 
+			}
+		}
+	}
+}
+```
