@@ -33,3 +33,34 @@ importScripts("test2.js")
 - location
 - JSON
 - importScripts //同步阻塞引入其他脚本
+
+### Shared Workers
+
+通浏览器同时打开多个tab(同一个页面), 就会同时打开多个work, 此时我们可以用共享work来减少性能资源消耗
+```
+var w1 = new SharedWorker( "http://127.0.0.1:8080/mySharedWorker.js" );
+
+// 通过port对象作为唯一标识
+w1.port.addEventListener( "message", handleMessages );
+w1.port.postMessage( "something cool" );
+
+//port connect initialized
+w1.port.start();
+```
+
+在shared worker 内部给来的请求分配一个端口
+```
+// inside the mySharedWorker.js
+addEventListener("connect", function (event) {
+    //分配端口给这个链接
+    var port = event.ports[0];
+
+    port.addEventListener("message", function (event) {
+        // ....
+        port.postMessage( .. );
+    })
+
+    // initialize the port connection
+    port.start();
+})
+```
