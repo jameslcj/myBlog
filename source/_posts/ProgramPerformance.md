@@ -64,3 +64,20 @@ addEventListener("connect", function (event) {
     port.start();
 })
 ```
+
+## SIMD
+SIMD 打算把 CPU 级的并行数学运算映射到 JavaScript API，以获得高性能的数据并行运 算，比如在大数据集上的数字处理。 现在还在研发中, 也许会在es7出现
+
+## asm.js
+asm.js 优化了垃圾收集和强制类型转换等部分, 所以适合数学运算(如游戏中的图形处理)
+
+[asm 代码风格](http://asmjs.org/spec/latest/)
+```js
+function test() {
+    "use asm"
+    var a = 45;
+    var b = a | 0; //因为js是32位的, 但现在的计算机一般都是64位的, 通过`| 0`后, 计算机知道这是32位的变量, 减少了对高位的追踪计算
+
+    var heap = new ArrayBuffer( 0x10000 ); // 从堆里申请64k内存
+}
+```
