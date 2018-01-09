@@ -33,3 +33,51 @@ importScripts("test2.js")
 - location
 - JSON
 - importScripts //同步阻塞引入其他脚本
+
+### Shared Workers
+
+通浏览器同时打开多个tab(同一个页面), 就会同时打开多个work, 此时我们可以用共享work来减少性能资源消耗
+```
+var w1 = new SharedWorker( "http://127.0.0.1:8080/mySharedWorker.js" );
+
+// 通过port对象作为唯一标识
+w1.port.addEventListener( "message", handleMessages );
+w1.port.postMessage( "something cool" );
+
+//port connect initialized
+w1.port.start();
+```
+
+在shared worker 内部给来的请求分配一个端口
+```
+// inside the mySharedWorker.js
+addEventListener("connect", function (event) {
+    //分配端口给这个链接
+    var port = event.ports[0];
+
+    port.addEventListener("message", function (event) {
+        // ....
+        port.postMessage( .. );
+    })
+
+    // initialize the port connection
+    port.start();
+})
+```
+
+## SIMD
+SIMD 打算把 CPU 级的并行数学运算映射到 JavaScript API，以获得高性能的数据并行运 算，比如在大数据集上的数字处理。 现在还在研发中, 也许会在es7出现
+
+## asm.js
+asm.js 优化了垃圾收集和强制类型转换等部分, 所以适合数学运算(如游戏中的图形处理)
+
+[asm 代码风格](http://asmjs.org/spec/latest/)
+```js
+function test() {
+    "use asm"
+    var a = 45;
+    var b = a | 0; //因为js是32位的, 但现在的计算机一般都是64位的, 通过`| 0`后, 计算机知道这是32位的变量, 减少了对高位的追踪计算
+
+    var heap = new ArrayBuffer( 0x10000 ); // 从堆里申请64k内存
+}
+```
