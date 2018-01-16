@@ -124,3 +124,9 @@ updateComponent 本质上也是通过递归渲染内容的，由于递归的特�
 
 禁止在 shouldComponentUpdate 和 componentWillUpdate 中调用 setState，这会造成循环 调用，直至耗光浏览器内存后崩溃。
  > mountComponent源码: /v15.0.0/src/renderers/shared/reconciler/ReactCompositeComponent.js
+
+ ## setState 异步更新
+ setState 通过一个队列机制实现 state 更新。 当执行 setState 时，会将需要更新的 state 合并 后放入状态队列，而不会立刻更新 this.state，队列机制可以高效地批量更新 state。
+ 当调用 setState 时，实际上会执行 enqueueSetState 方法，并对 partialState 以及_pendingStateQueue 更新队列进行合并操作，最终通过 enqueueUpdate 执行 state 更新。
+ 而 performUpdateIfNecessary 方法会获取 _pendingElement、_pendingStateQueue、_pendingForceUpdate，并调用 receiveComponent 和 updateComponent 方法进行组件更新。
+ 如 果 在 shouldComponentUpdate 或 componentWillUpdate 方 法 中 调 用 setState ， 此 时 this._pendingStateQueue != null，则 performUpdateIfNecessary 方法就会调用 updateComponent 方法进行组件更新，但 updateComponent 方法又会调用 shouldComponentUpdate 和 componentWill- Update 方法，因此造成循环调用，使得浏览器内存占满后崩溃
