@@ -130,3 +130,11 @@ updateComponent 本质上也是通过递归渲染内容的，由于递归的特�
  当调用 setState 时，实际上会执行 enqueueSetState 方法，并对 partialState 以及_pendingStateQueue 更新队列进行合并操作，最终通过 enqueueUpdate 执行 state 更新。
  而 performUpdateIfNecessary 方法会获取 _pendingElement、_pendingStateQueue、_pendingForceUpdate，并调用 receiveComponent 和 updateComponent 方法进行组件更新。
  如 果 在 shouldComponentUpdate 或 componentWillUpdate 方 法 中 调 用 setState ， 此 时 this._pendingStateQueue != null，则 performUpdateIfNecessary 方法就会调用 updateComponent 方法进行组件更新，但 updateComponent 方法又会调用 shouldComponentUpdate 和 componentWill- Update 方法，因此造成循环调用，使得浏览器内存占满后崩溃
+
+ ## vitrul diff
+ > 源码: /v15.0.0/src/renderers/shared/reconciler/ReactMultiChild.js
+
+ ## React Patch 方法
+ 所谓 Patch，简而言之就是将 tree diff 计算出来的 DOM 差异队列更新到真实的 DOM 节点上，最终让浏览器能够渲染出更新的数据。而且，React 并不是计算出一个差异就去执 行一次 Patch，而是计算出全部差异并放入差异队列后，再一次性地去执行 Patch 方法完成真实 DOM 的更新。
+ 
+ >Patch 方 法 的 源 码 如 下 ( 源 码 路 径 : /v15.0.0/src/renderers/dom/client/utils/DOMChildrenOperations.js)
