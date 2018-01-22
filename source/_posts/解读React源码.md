@@ -130,3 +130,65 @@ updateComponent 本质上也是通过递归渲染内容的，由于递归的特�
  当调用 setState 时，实际上会执行 enqueueSetState 方法，并对 partialState 以及_pendingStateQueue 更新队列进行合并操作，最终通过 enqueueUpdate 执行 state 更新。
  而 performUpdateIfNecessary 方法会获取 _pendingElement、_pendingStateQueue、_pendingForceUpdate，并调用 receiveComponent 和 updateComponent 方法进行组件更新。
  如 果 在 shouldComponentUpdate 或 componentWillUpdate 方 法 中 调 用 setState ， 此 时 this._pendingStateQueue != null，则 performUpdateIfNecessary 方法就会调用 updateComponent 方法进行组件更新，但 updateComponent 方法又会调用 shouldComponentUpdate 和 componentWill- Update 方法，因此造成循环调用，使得浏览器内存占满后崩溃
+ 
+```js
+class Demo extends React.component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            a: 0
+        }
+    }
+    componentDidMount() {
+        this.setState({
+            a: this.state.a + 1
+        }, () => {
+            console.log("a1 : ", this.state.a)
+            this.setState({
+                a: this.state.a + 1
+            })
+            console.log("a2: ", this.state.a)
+        })
+        this.setState({
+            a: this.state.a + 1
+        }, () => {
+            console.log("a3: ", this.state.a)
+
+        })
+        console.log("a4: ", this.state.a)
+        setTimeout(() => {
+            console.log("a5: ", this.state.a)
+            this.setState({
+                a: this.state.a + 1
+            }, () => {
+                console.log("a6 : ", this.state.a)
+                this.setState({
+                    a: this.state.a + 1
+                })
+                console.log("a7: ", this.state.a)
+            })
+            console.log("a8: ", this.state.a);
+            this.setState({
+                a: this.state.a + 1
+            }, () => {
+                console.log("a9: ", this.state.a);
+
+            })
+            console.log("a10: ", this.state.a);
+        })
+    }
+}
+//上面结果
+/**
+ * a4: 0
+ * a1: 0
+ * a2: 1
+ * a3: 1
+ * a5: 2
+ * a6: 3
+ * a7: 3
+ * a8: 4
+ * a9: 5
+ * a10: 5
+ * /
+```
