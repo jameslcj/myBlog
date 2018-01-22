@@ -192,3 +192,11 @@ class Demo extends React.component {
  * a10: 5
  * /
 ```
+
+ ## vitrul diff
+ > 源码: /v15.0.0/src/renderers/shared/reconciler/ReactMultiChild.js
+
+ ## React Patch 方法
+ 所谓 Patch，简而言之就是将 tree diff 计算出来的 DOM 差异队列更新到真实的 DOM 节点上，最终让浏览器能够渲染出更新的数据。而且，React 并不是计算出一个差异就去执 行一次 Patch，而是计算出全部差异并放入差异队列后，再一次性地去执行 Patch 方法完成真实 DOM 的更新。
+ 
+ > Patch 方 法 的 源 码 如 下 ( 源 码 路 径 : /v15.0.0/src/renderers/dom/client/utils/DOMChildrenOperations.js)
