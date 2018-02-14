@@ -115,13 +115,159 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
-## 数组
+### 数组类型指针
+#### 第一种
+```c
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    typedef int (myArray)[5];//定义了一个数组类型
+    //myArray arr; //int arr[5];
+    myArray* p = NULL;
+    int arr[5];
+    for (int i = 0; i < 5; i ++) {
+        arr[i] = i + 1;
+    }
+    p = &arr;
+    for (int i = 0; i < 5; i ++) {
+        printf("(*p)[%d]: %d\n", i, (*p)[i]);
+    }
+    return 0;
+}
+```
+#### 第二种
+```c
+int main(int argc, const char * argv[]) {
+    typedef int (*arrayTypeP)[5];
+    arrayTypeP p = NULL;
+    int arr[5];
+    for (int i = 0; i < 5; i ++) {
+        arr[i] = i + 1;
+    }
+    p = &arr;
+    for (int i = 0; i < 5; i ++) {
+        printf("(*p)[%d]: %d\n", i, (*p)[i]);
+    }
+    return 0;
+}
+```
+
+#### 第三种
+```c
+int main(int argc, const char * argv[]) {
+    int (*p)[5];
+    int arr[5];
+    for (int i = 0; i < 5; i ++) {
+        arr[i] = i + 1;
+    }
+    p = &arr;
+    for (int i = 0; i < 5; i ++) {
+        printf("(*p)[%d]: %d\n", i, (*p)[i]);
+    }
+    return 0;
+}
+```
+
+## 结构体
+### 结构体的定义
+```c
+struct Teacher {
+    char name[32];
+    int age;
+};//struct Teacher tearch;
+
+typedef struct Teacher2 {
+    char name[32];
+    int age;
+}t;// t tearch;
+
+struct Student {
+    char name[32];
+    int age;
+}s1, s2;//定义类型 同时定义变量
+
+struct {
+    char name[32];
+    int age;
+}s3 = {"s3", 18};//定义匿名类型 同时定义变量
+
+int main(int argc, const char * argv[], char ** env) {
+    struct Teacher t1 = {"t1", 18};
+    t t2 = {"t2", 18};
+    return 0;
+}
+```
+
+### 结构体的操作
+> t1.age t->age `.`和`->` 没有操作内存, 都是在cpu中, 相对于t1进行偏移量寻址操作
+
+```c
+int main(int argc, const char * argv[], char ** env) {
+    struct Teacher t1 = {"t1", 18};
+    t t2 = {"t2", 18};
+    t* p = NULL;
+    p = &t2;
+    printf("t2.age: %d\n", t2.age);
+    
+    p->age = 20;
+    
+    printf("t2.age: %d\n", t2.age);
+    printf("p->name: %s\n", p->name);
+    
+    return 0;
+}
+
+```
+
+## 其他
 ### 数组首地址与数组地址的区别?
 > c是数组的首元素的地址 c+1 步长为4字节
 > &c是数组的地址 &c+1 步长为200*4字节
 
 ```c
-int c[200] = {0};//编译时将所有的值设置为0
-memset(c, 0, sizeof(c));//运行时, 显示的将所有的值设置为0
+int main(int argc, const char * argv[]) {
+    int c[200] = {0};//编译时将所有的值设置为0
+    memset(c, 0, sizeof(c));//运行时, 显示的将所有的值设置为0
+    
+    printf("c => %d \n c+1 => %d \n &c => %d \n &c+1 => %d ", c, c+1, &c, &c+1);
+    /**
+        c => 1606415264 
+        c+1 => 1606415268 
+        &c => 1606415264 
+        &c+1 => 1606416064
+    **/
+    return 0;
+}
+```
+### 定义数组类型
+```c
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    typedef int (myArray)[5];//定义了一个数组类型
+    myArray arr; //int arr[5];
+    for (int i = 0; i < 5; i ++) {
+        printf("%d\n", arr[i]);
+    }
+    return 0;
+}
 ```
 
+### 程序默认参数
+```c
+int main(int argc, const char * argv[], char ** env) {
+    //传递参数个数
+    printf("argc: %d\n", argc);
+    //调用程序是 传递是参数, 默认会传递文件路径
+    for (int i = 0; i < argc; i++) {
+        printf("%s\n", argv[i]);
+    }
+    //打印环境变量
+    while (*env ++) {
+        printf("%s\n", *env);
+    }
+    return 0;
+}
+```
+
+### 字符串结束标志
+> 字符串结束标志位 '\0', NULL, 0
+> 本质就是0
