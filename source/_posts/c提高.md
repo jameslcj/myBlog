@@ -9,6 +9,21 @@ tags:
 - 全局区: 存放全局变量和静态变量, 常量, 比如字符串常量
 - 代码区: 存放函数体二进制代码
 
+```c
+int gl = 1;
+int main(int argc, const char * argv[]) {
+    char a = 'a';
+    char b = 'b';
+    int c = 1;
+    char *p = "aaaa";
+    char *p2 = (char*)malloc(sizeof(char) * 100);
+    
+    printf("a: %d , b: %d, c: %d, &p: %d, &p2: %d, p: %d, p2: %d, gl: %d\n", &a, &b, &c, &p, &p2, p, p2, &gl);
+    //a: 1606416119 , b: 1606416118, c: 1606416112, &p: 1606416104, &p2: 1606416096, p: 7887, p2: 3186800, gl: 8436
+    return 0;
+}
+```
+
 
 ```c
 char* getStr1() {
@@ -163,6 +178,19 @@ int main(int argc, const char * argv[]) {
     for (int i = 0; i < 5; i ++) {
         printf("(*p)[%d]: %d\n", i, (*p)[i]);
     }
+    return 0;
+}
+```
+
+### 函数指针
+```c
+typedef void (*myFunc)(int a, int b);
+void func1(int a, int b) {
+    printf("a: %d, b: %d\n", a, b);
+}
+int main(int argc, const char * argv[]) {
+    myFunc p = func1;
+    p(1, 2);
     return 0;
 }
 ```
