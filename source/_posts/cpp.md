@@ -320,3 +320,55 @@ int main(int argc, const char * argv[]) {
 
 ```
 
+### 类的const
+> void setA() const ==> void setA(const c1 * const this)
+
+```cpp
+class c1 {
+public:
+    int a;
+    void setA() const
+    {
+        // this->a = 100; 这里会报错 因为有const修饰
+    }
+    int getA() {
+        return this->a;
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    c1 c;
+    c.setA();
+    cout<< " a: " << c.getA() << endl;
+    return 0;
+}
+```
+
+### 方法返回类引用
+```cpp
+class C1 {
+public:
+    int a;
+    C1(int a = 0) {
+        this->a = a;
+    }
+    C1& add(C1 c2) {
+        this->a = this->a + c2.a;
+        
+        return *this;
+    }
+    
+    void printA() {
+        cout << " a: " << this->a << endl;
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    C1 c1(1), c2(2);
+    c1.add(c2);
+    c1.printA(); // a: 3
+    c2.printA(); // a: 2
+    return 0;
+}
+
+```
