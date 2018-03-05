@@ -372,3 +372,81 @@ int main(int argc, const char * argv[]) {
 }
 
 ```
+
+### 友元函数
+> 通过friend申明为友元方法, 可以使用外部函数直接修改类的私有变量
+
+```cpp
+class C1 {
+private:
+    int a;
+public:
+    friend void modifyA(C1 &c, int _a);
+    C1(int a = 0) {
+        this->a = a;
+    }
+    C1& add(C1 c2) {
+        this->a = this->a + c2.a;
+        
+        return *this;
+    }
+    
+    void printA() {
+        cout << " a: " << this->a << endl;
+    }
+};
+
+void modifyA(C1 &c, int _a) {
+    c.a = _a;
+}
+
+int main(int argc, const char * argv[]) {
+    C1 c1(1);
+    c1.printA();
+    modifyA(c1, 100);
+    c1.printA();
+    return 0;
+}
+```
+
+### 友元类
+```cpp
+class C1 {
+private:
+    int a;
+public:
+    friend class C2;
+    C1(int a = 0) {
+        this->a = a;
+    }
+    C1& add(C1 c2) {
+        this->a = this->a + c2.a;
+        
+        return *this;
+    }
+    
+    void printA() {
+        cout << " a: " << this->a << endl;
+    }
+};
+
+class C2 {
+private:
+    C1 c;
+public:
+    void setC1A(int _a) {
+        c.a = _a;
+    }
+    void printA() {
+        cout << " a: " << c.a << endl;
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    C2 c2;
+    c2.printA();
+    c2.setC1A(100);
+    c2.printA();
+    return 0;
+}
+```
