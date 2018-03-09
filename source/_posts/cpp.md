@@ -450,3 +450,68 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### 类的操作符重载
+```cpp
+
+class C3 {
+    int a = 0;
+    //因为是私有变量所以需要将全局函数声明为友元函数
+    friend C3 operator+(C3 &c1, C3 &c2);
+    friend C3 operator++(C3 &c1, int);
+public:
+    C3(int a) {
+        this->a = a;
+    }
+
+    void printA() {
+        cout << "a: " << this->a << endl;
+    }
+
+    //第一种 用类方法声明
+    C3 operator-(C3 &c2) {
+        C3 tmp(0);
+        tmp.a = this->a - c2.a;
+
+        return tmp;
+    }
+    
+    //一元操作符重载
+    C3& operator++() {
+        this->a++;
+        
+        return *this;
+    }
+
+    //后置--
+    C3 operator--(int) {
+        C3 tmp = *this;
+        this->a--;
+        
+        return tmp;
+    }
+};
+//第二种 使用全局函数声明
+C3 operator+(C3 &c1, C3 &c2) {
+    C3 tmp(0);
+    tmp.a = c1.a + c2.a;
+
+    return tmp;
+}
+C3 operator++(C3 &c1, int){
+    C3 tmp = c1;
+    c1.a ++;
+    return tmp;
+}
+int main(int argc, const char * argv[]) {
+    C3 c1(1), c2(2);
+
+    C3 c3 = c1 + c2;
+    c3.printA();
+    C3 c4 = c1 - c2;
+    c4.printA();
+    ++c4;
+    c4.printA();
+    return 0;
+}
+```
