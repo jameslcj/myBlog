@@ -455,6 +455,7 @@ int main(int argc, const char * argv[]) {
 ```cpp
 
 class C3 {
+    int* arr;
     int a = 0;
     //因为是私有变量所以需要将全局函数声明为友元函数
     friend C3 operator+(C3 &c1, C3 &c2);
@@ -462,6 +463,7 @@ class C3 {
 public:
     C3(int a) {
         this->a = a;
+        this->arr = new int[100];
     }
 
     void printA() {
@@ -490,6 +492,12 @@ public:
         
         return tmp;
     }
+
+    int& operator[](int i) {
+        this->arr[i] = i;
+        
+        return i;
+    }
 };
 //第二种 使用全局函数声明
 C3 operator+(C3 &c1, C3 &c2) {
@@ -512,6 +520,10 @@ int main(int argc, const char * argv[]) {
     c4.printA();
     ++c4;
     c4.printA();
+    for (int i = 0; i < 5; i ++) {
+        c4[i] = i;
+        cout << c4[i] << endl;
+    }
     return 0;
 }
 ```
