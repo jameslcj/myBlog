@@ -527,3 +527,112 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+## 类继承
+类继承也有三种修饰符public, protected, private
+- public继承, 就是默认继承
+- protected继承, public属性和方法都会变成protected
+- private继承, public, protected属性和方法都会变成private
+### 属性的重写
+```cpp
+class Parent {
+public:
+    int a;
+protected:
+    int b;
+private:
+    int c;
+public:
+    void printAll() {
+        cout << "a: " << a << " b:" << b << " c:" << c << endl;
+    }
+};
+class Son : public Parent{
+public:
+    int b;
+    void printAll2() {
+        cout << "a: " << a << " b:" << b  << endl;
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    Son s1;
+    s1.a = 1;
+    s1.b = 2;
+    s1.Parent::a = 2;
+    s1.printAll(); //a: 2 b:0 c:0
+    s1.printAll2(); //a: 1 b:2
+
+    return 0;
+}
+
+```
+
+### 继承的构造方法和析构方法执行顺序
+```cpp
+class Object {
+public:
+    int o1;
+    int o2;
+    Object(int o1, int o2) {
+        this->o1 = o1;
+        this->o2 = o2;
+        cout << "Object 构造方法:  o1: " << o1 << " o2: " << o2 << endl;
+    }
+    ~Object() {
+        cout << "Object 析构方法:  o1: " << o1 << " o2: " << o2 << endl;
+    }
+};
+class Parent: public Object {
+public:
+    int a;
+protected:
+    int b;
+private:
+    int c;
+public:
+    Parent(int a, int b) : Object(a + 1, b + 1) {
+        this->a = a;
+        this->b = b;
+        cout << "Parent 构造方法:  a: " << a << " b: " << b << endl;
+    }
+    ~Parent() {
+        cout << "Parent 析构方法:  a: " << a << " b: " << b << endl;
+    }
+    void printAll() {
+        cout << "a: " << a << " b:" << b << " c:" << c << endl;
+    }
+};
+class Son : public Parent{
+public:
+    int b;
+    Object o1;
+    Object o2;
+    Son(int a, int b) : o2(a, 2), Parent(a+1, b + 1), o1(a, b) {
+        cout << "Son 构造方法:  a: " << a << " b: " << b << endl;
+    }
+    ~Son() {
+        cout << "Son 析构方法" << endl;
+    }
+    void printAll2() {
+        cout << "a: " << a << " b:" << b  << endl;
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    Son s1(1, 2);
+    /**
+     Object 构造方法:  o1: 3 o2: 4
+    Parent 构造方法:  a: 2 b: 3
+    Object 构造方法:  o1: 1 o2: 2
+    Object 构造方法:  o1: 1 o2: 2
+    Son 构造方法:  a: 1 b: 2
+    Son 析构方法
+    Object 析构方法:  o1: 1 o2: 2
+    Object 析构方法:  o1: 1 o2: 2
+    Parent 析构方法:  a: 2 b: 3
+    Object 析构方法:  o1: 3 o2: 4
+    **/
+    return 0;
+}
+```
