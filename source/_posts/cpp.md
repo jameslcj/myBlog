@@ -636,3 +636,54 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### 虚继承与继承二义性
+> 如下, B1与B2都继承了A, C又同时继承了B1和B2, 这样就产生了二义性, 
+为了防止产生二义性应该给B1, B2添加virtual, 表示虚继承, 这样A的构造函数只会被执行一次,
+虚继承会给类多加了8字节的数据;
+如果在2个类中出现同样名称的变量, 只能通过 `obj.class::var`的方式来解决二义性
+
+```cpp
+cclass A {
+public:
+    int a;
+    A() {
+        cout << "I am A" << endl;
+    }
+};
+
+class B1 : virtual public A {
+public:
+    int b;
+    
+};
+
+class B2 : virtual public A {
+public:
+    int b;
+};
+
+class C4: public B1, public B2 {
+public:
+    int c;
+};
+
+int main(int argc, const char * argv[]) {
+    C4 c;
+    c.a = 1;
+    c.B1::b = 2;
+    c.B2::b = 3;
+    cout << "sizeof(A): " << sizeof(A) << endl;
+    cout << "sizeof(B1): " << sizeof(B1) << endl;
+    cout << "sizeof(B2): " << sizeof(B2) << endl;
+    cout << "sizeof(C4): " << sizeof(C4) << endl;
+    /**
+    I am A
+    sizeof(A): 4
+    sizeof(B1): 16
+    sizeof(B2): 16
+    sizeof(C4): 40
+    /*
+    return 0;
+}
+```
