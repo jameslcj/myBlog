@@ -451,7 +451,61 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+## 类的重载
+> 重载必须发生在同一类中, 继承的同名方法只会覆盖重写, 不能发生重载
+
+```cpp
+class Human {
+public:
+    virtual void introduce() {
+        cout << " I am Human" << endl;
+    }
+    void echo(char* p, int a) {
+        cout << "echo: " << p << " a: " << a << endl;
+    }
+    virtual ~Human() {
+        cout << "Human 析构函数" << endl;
+    }
+};
+
+class Man : public Human {
+public:
+    void introduce() {
+        cout << " I am Man " << endl;
+    }
+    void echo(char* p) {
+        cout << "echo: " << p << endl;
+    }
+    ~Man() {
+        cout << "Man 析构函数" << endl;
+    }
+};
+
+class Woman : public Human {
+public:
+    void introduce() {
+        cout << " I am Human " << endl;
+    }
+    ~Woman() {
+        cout << "Woman 析构函数" << endl;
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    Human *human = NULL;
+    Man man = Man();
+    Woman woman = Woman();
+    human = &man;
+    
+    man.echo("hello");
+    man.Human::echo("hello", 1);//无法直接调用man.echo("hello", 1)
+    
+    return 0;
+}
+```
+
 ### 类的操作符重载
+
 ```cpp
 
 class C3 {
@@ -684,6 +738,104 @@ int main(int argc, const char * argv[]) {
     sizeof(B2): 16
     sizeof(C4): 40
     /*
+    return 0;
+}
+```
+## 多态
+> 想让方法实现多态, 必须给方法添加上virtual, 否则使用多态调用时, 只会调用父类的方法, 而不是自己的方法;
+没加virtual, 是静态联编, 就是说调用哪个方法, 在编译阶段已经确定;
+加了virtual, 是动态联编, 就是说调用哪个方法, 只调用的时候的确定
+
+```cpp
+class Human {
+public:
+    virtual void introduce() {
+        cout << " I am Human" << endl;
+    }
+};
+
+class Man : public Human {
+public:
+    void introduce() {
+        cout << " I am Man " << endl;
+    }
+};
+
+class Woman : public Human {
+public:
+    void introduce() {
+        cout << " I am Human " << endl;
+    }
+};
+
+void introduce(Human *p) {
+    p->introduce();
+}
+int main(int argc, const char * argv[]) {
+    Human *human = NULL;
+    Man man = Man();
+    Woman woman = Woman();
+    human = &man;
+    
+    introduce(&man);
+    introduce(&woman);
+    introduce(human);
+    return 0;
+}
+```
+
+### 虚析构函数
+> 如果通过多态的方式, 释放对象内存, 必须给析构函数加上vitrual, 否则只会调用父类的析构函数, 子类的析构函数不会被调用, 而导致内存溢出
+```cpp
+class Human {
+public:
+    virtual void introduce() {
+        cout << " I am Human" << endl;
+    }
+    virtual ~Human() {
+        cout << "Human 析构函数" << endl;
+    }
+};
+
+class Man : public Human {
+public:
+    void introduce() {
+        cout << " I am Man " << endl;
+    }
+    ~Man() {
+        cout << "Man 析构函数" << endl;
+    }
+};
+
+class Woman : public Human {
+public:
+    void introduce() {
+        cout << " I am Human " << endl;
+    }
+    ~Woman() {
+        cout << "Woman 析构函数" << endl;
+    }
+};
+
+void introduce(Human *p) {
+    p->introduce();
+}
+void deleteHuman(Human *p) {
+    delete p;
+}
+int main(int argc, const char * argv[]) {
+    Human *human = NULL;
+    Man man = Man();
+    Woman woman = Woman();
+    human = &man;
+    
+    introduce(&man);
+    introduce(&woman);
+    introduce(human);
+    
+    Human *man2 = new Man();
+    deleteHuman(man2);
+    cout << "==========" << endl;
     return 0;
 }
 ```
