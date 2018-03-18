@@ -839,3 +839,107 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### vptr 指针
+> cpp的多态是使用vptr指针实现的, 即每个类都会生成一份虚函数映射表, 然后把虚函数放入, 然后通过vptr指针获取对应的虚函数
+
+#### 子类的vptr指针是分步初始化的
+> 子类的vptr指针是在构造函数执行完毕后才初始化完成的
+
+```cpp
+class Parent {
+public:
+    Parent() {
+        print();
+    }
+    virtual void print() {
+        cout << "I am Parent" << endl;
+    }
+};
+
+class Son : public Parent {
+public:
+    Son() {
+        print();
+    }
+    virtual void print() {
+        cout << "I am Son" << endl;
+    }
+};
+int main(int argc, const char * argv[]) {
+    Son s1;
+    /**
+     * I am Parent
+     * I am Son
+     */
+    return 0;
+}
+```
+
+## 纯虚函数 -> 抽象函数
+> cpp中的接口是用纯虚函数+多继承实现的
+
+```cpp
+class interface1 {
+public:
+    virtual void run() = 0;
+    virtual void eat() = 0;
+};
+class interface2 {
+public:
+    virtual void run() = 0;
+    virtual void echo() = 0;
+};
+
+class Human : public interface1, public interface2 {
+public:
+    void run() {
+        cout << "I am running" << endl;
+    }
+    void echo() {
+        cout << "hello world" << endl;
+    }
+    void eat() {
+        cout << "I like delicious foods" << endl;
+    }
+};
+class Pig : public interface1 {
+public:
+    void run() {
+        cout << "I am running" << endl;
+    }
+    void echo() {
+        cout << "gu gu gu" << endl;
+    }
+    void eat() {
+        cout << "I like any food" << endl;
+    }
+};
+class Dog : public interface2 {
+public:
+    void run() {
+        cout << "I am running" << endl;
+    }
+    void echo() {
+        cout << "Wang Wang Wang" << endl;
+    }
+};
+void doSomething(interface1* inter) {
+    inter->run();
+    inter->eat();
+}
+void doSomething2(interface2* inter) {
+    inter->run();
+    inter->echo();
+}
+int main(int argc, const char * argv[]) {
+    Human h1;
+    Pig p1;
+    Dog d1;
+    doSomething(&h1);
+    doSomething(&p1);
+    doSomething2(&h1);
+    doSomething2(&d1);
+    return 0;
+}
+```
