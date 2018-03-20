@@ -183,20 +183,30 @@ int main(int argc, const char * argv[]) {
 ```
 
 ### 函数指针
+> 用函数指针实现多态
 ```c
+//第一种
+typedef void (*myFunc)(int a, int b);
+//void likeMultiPoly(myFunc p, int a, int b) {
+// 第二种
+void likeMultiPoly(void (*p)(int a, int b) , int a, int b) {
+    p(a, b);
+}
 void func2(int a, int b) {
-    printf("a: %d, b: %d\n", a, b);
+    printf("func2 a: %d, b: %d\n", a, b);
+}
+void func3(int a, int b) {
+    printf("func3 a: %d, b: %d\n", a, b);
+}
+
+void func4(int a, int b) {
+    printf("func4 a: %d, b: %d\n", a, b);
 }
 int main(int argc, const char * argv[]) {
-    //第一种
-    typedef void (*myFunc)(int a, int b);
-    myFunc p = func2;
-    p(1, 2);
     
-    //第二种
-    void (*myFunc2)(int a, int b);
-    myFunc2 = func2;
-    func2(3, 4);
+    likeMultiPoly(func2, 1, 2);
+    likeMultiPoly(func3, 3, 4);
+    likeMultiPoly(func4, 5, 6);
     return 0;
 }
 ```

@@ -784,8 +784,37 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+### 用函数指针实现多态
+```cpp
+//第一种
+typedef void (*myFunc)(int a, int b);
+//void likeMultiPoly(myFunc p, int a, int b) {
+// 第二种
+void likeMultiPoly(void (*p)(int a, int b) , int a, int b) {
+    p(a, b);
+}
+void func2(int a, int b) {
+    printf("func2 a: %d, b: %d\n", a, b);
+}
+void func3(int a, int b) {
+    printf("func3 a: %d, b: %d\n", a, b);
+}
+
+void func4(int a, int b) {
+    printf("func4 a: %d, b: %d\n", a, b);
+}
+int main(int argc, const char * argv[]) {
+    
+    likeMultiPoly(func2, 1, 2);
+    likeMultiPoly(func3, 3, 4);
+    likeMultiPoly(func4, 5, 6);
+    return 0;
+}
+```
+
 ### 虚析构函数
 > 如果通过多态的方式, 释放对象内存, 必须给析构函数加上vitrual, 否则只会调用父类的析构函数, 子类的析构函数不会被调用, 而导致内存溢出
+
 ```cpp
 class Human {
 public:
