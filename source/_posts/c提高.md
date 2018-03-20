@@ -184,13 +184,19 @@ int main(int argc, const char * argv[]) {
 
 ### 函数指针
 ```c
-typedef void (*myFunc)(int a, int b);
-void func1(int a, int b) {
+void func2(int a, int b) {
     printf("a: %d, b: %d\n", a, b);
 }
 int main(int argc, const char * argv[]) {
-    myFunc p = func1;
+    //第一种
+    typedef void (*myFunc)(int a, int b);
+    myFunc p = func2;
     p(1, 2);
+    
+    //第二种
+    void (*myFunc2)(int a, int b);
+    myFunc2 = func2;
+    func2(3, 4);
     return 0;
 }
 ```
