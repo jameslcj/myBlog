@@ -29,3 +29,31 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### 不同类型静态变量
+> 不同类型的静态变量 各分配内存
+
+```cpp
+template <typename T>
+class TestA {
+public:
+    static T a;
+};
+
+//这句必须要申明
+template <typename T>
+T TestA<T>::a = 0;
+
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    TestA<int> a;
+    a.a = 10;
+    TestA<char> b;
+    b.a = 'a';
+    
+    cout << "TestA<int>::a " << TestA<int>::a << " TestA<char>::a " << TestA<char>::a << endl;//TestA<int>::a 10 TestA<char>::a a
+
+    return 0;
+}
+
+```
