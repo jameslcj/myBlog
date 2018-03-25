@@ -60,112 +60,153 @@ int main(int argc, const char * argv[]) {
 
 ### 类模板
 ```cpp
+#include <iostream>
+using namespace std;
+
 template <typename T>
-class MyVertor {
-//    friend ostream& operator<< <T>(ostream& out, const MyVertor& obj);
-    friend ostream& operator<< (ostream& out, const MyVertor<T>& obj) {
-        int size = obj.getSize();
+class MyVertor2 {
+    friend ostream& operator<<(ostream& out, const MyVertor2<T> &obj)
+    {
         
-        out << "operator << : ";
-        
-        for (int i = 0; i < size; i ++) {
+        out << "开始重装 <<: " ;
+        int len = obj.getLen();
+        for (int i = 0; i < len; i++) {
             out << obj.m_space[i] << " ";
         }
         
+        out << endl;
+        
         return out;
     }
-public:
-    
-    int getSize() const
-    {
-        return m_size;
-    }
-    
-    T& getSpace()
-    {
-        return m_space;
-    }
-
-public:
-    MyVertor<T>(int size = 0)
-    {
-        m_size = size;
-        m_space = new T[size];
-    }
-    MyVertor<T>(const MyVertor<T> &obj)
-    {
-        int size = obj.m_size;
-        m_size = size;
-        m_space = new T[m_size];
-        for (int i = 0; i < size; i ++) {
-            m_space[i] = obj.m_space[i];
-        }
-    }
-    ~MyVertor<T>() {
-        if (m_space != NULL) {
-            delete [] m_space;
-            m_space = NULL;
-            m_size = 0;
-        }
-    }
-//
-public:
-    T& operator[](int index)
-    {
-        return m_space[index];
-    }
-
-    MyVertor<T>& operator=(const MyVertor<T>& obj)
-    {
-        if (m_space != NULL) {
-            delete[] m_space;
-            m_space = NULL;
-            m_size = 0;
-        }
-        int size = obj.getSize();
-        m_size = size;
-        m_space = new T[m_size];
-        for (int i = 0; i < size; i ++) {
-            m_space[i] = obj.m_space[i];
-        }
-        
-        
-        return *this;
-    }
-
-   
 
 protected:
-    int m_size;
-    T* m_space = NULL;
-    
+    int m_len;
+    T* m_space;
+public:
+    MyVertor2(int len = 0);
+    MyVertor2(const MyVertor2& obj);
+    ~MyVertor2();
+public:
+    T& operator[](int index);
+    MyVertor2& operator=(const MyVertor2& obj);
+    int getLen()const;
 };
 
-//template <typename T>
-//ostream& operator<< (ostream& out, const MyVertor<T>& obj) {
-//    int size = obj.getSize();
-//    
-//    for (int i = 0; i < size; i ++) {
-//        out << obj.m_space[i] << " ";
-//    }
-//    
-//    return out;
-//}
+template <typename T>
+MyVertor2<T>::MyVertor2(int len)
+{
+    this->m_len = len;
+    this->m_space = new T[len];
+}
 
-int main(int argc, const char * argv[]) {
-    MyVertor<int> m1(10), m2(10);
-    for (int i = 0; i < 10; i ++) {
-        m1[i] = i;
-        cout << m1[i] << " ";
-
+template <typename T>
+MyVertor2<T>::MyVertor2(const MyVertor2& obj)
+{
+    m_len = obj.m_len;
+    m_space = new T[m_len];
+    
+    for (int i = 0; i < m_len; i++) {
+        m_space[i] = obj.m_space[i];
     }
     
-    cout << endl;
+    return *this;
+}
+
+template <typename T>
+MyVertor2<T>::~MyVertor2()
+{
+    if (m_space != NULL) {
+        delete [] m_space;
+        m_space = NULL;
+        m_len = 0;
+    }
+}
+
+
+template <typename T>
+T& MyVertor2<T>::operator[](int index)
+{
+    return m_space[index];
+}
+
+template <typename T>
+MyVertor2<T>& MyVertor2<T>::operator=(const MyVertor2& obj)
+{
+    if (m_space != NULL) {
+        delete [] m_space;
+        m_space = NULL;
+        m_len = 0;
+    }
     
-    m2 = m1;
+    m_len = obj.m_len;
+    m_space = new T[m_len];
     
-    MyVertor<int> m3 = m1;
+    for (int i = 0; i < m_len; i++) {
+        m_space[i] = obj.m_space[i];
+    }
+
+    return *this;
+}
+
+template <typename T>
+int MyVertor2<T>::getLen() const
+{
+    return m_len;
+}
+class Human {
     
-    cout << m3;    return 0;
+    friend ostream& operator<<(ostream& out, const Human& obj) {
+        out << "name: " << obj.m_name << " age:" << obj.m_age << endl;
+        return out;
+    }
+protected:
+    char* m_name;
+    int m_age;
+public:
+    Human() {
+        m_age = 18;
+        m_name = new char[0];
+        strcpy(m_name, "");
+    }
+    Human(char *p_name, int age) {
+        int len = strlen(p_name) + 1;
+        m_name = new char[len];
+        strcpy(m_name, p_name);
+        m_age = age;
+    }
+    ~Human() {
+        if (m_name != NULL) {
+            delete m_name;
+            m_name = NULL;
+        }
+    }
+    Human& operator=(const Human& obj) {
+        if (m_name != NULL) {
+            delete m_name;
+            m_name = NULL;
+        }
+        
+        int len = strlen(obj.m_name) + 1;
+        m_name = new char[len];
+        strcpy(m_name, obj.m_name);
+        
+        m_age = obj.m_age;
+        return *this;
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    Human h1("h1", 1);
+    Human h2("h2", 2);
+    MyVertor2<Human> v1(1);
+    v1[0] = h1;
+    
+    MyVertor2<Human> v2;
+    v2 = v1;
+    
+    
+    cout << v2[0];
+    
+    return 0;
 }
 ```
