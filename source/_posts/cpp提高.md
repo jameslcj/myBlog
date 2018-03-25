@@ -57,3 +57,115 @@ int main(int argc, const char * argv[]) {
 }
 
 ```
+
+### 类模板
+```cpp
+template <typename T>
+class MyVertor {
+//    friend ostream& operator<< <T>(ostream& out, const MyVertor& obj);
+    friend ostream& operator<< (ostream& out, const MyVertor<T>& obj) {
+        int size = obj.getSize();
+        
+        out << "operator << : ";
+        
+        for (int i = 0; i < size; i ++) {
+            out << obj.m_space[i] << " ";
+        }
+        
+        return out;
+    }
+public:
+    
+    int getSize() const
+    {
+        return m_size;
+    }
+    
+    T& getSpace()
+    {
+        return m_space;
+    }
+
+public:
+    MyVertor<T>(int size = 0)
+    {
+        m_size = size;
+        m_space = new T[size];
+    }
+    MyVertor<T>(const MyVertor<T> &obj)
+    {
+        int size = obj.m_size;
+        m_size = size;
+        m_space = new T[m_size];
+        for (int i = 0; i < size; i ++) {
+            m_space[i] = obj.m_space[i];
+        }
+    }
+    ~MyVertor<T>() {
+        if (m_space != NULL) {
+            delete [] m_space;
+            m_space = NULL;
+            m_size = 0;
+        }
+    }
+//
+public:
+    T& operator[](int index)
+    {
+        return m_space[index];
+    }
+
+    MyVertor<T>& operator=(const MyVertor<T>& obj)
+    {
+        if (m_space != NULL) {
+            delete[] m_space;
+            m_space = NULL;
+            m_size = 0;
+        }
+        int size = obj.getSize();
+        m_size = size;
+        m_space = new T[m_size];
+        for (int i = 0; i < size; i ++) {
+            m_space[i] = obj.m_space[i];
+        }
+        
+        
+        return *this;
+    }
+
+   
+
+protected:
+    int m_size;
+    T* m_space = NULL;
+    
+};
+
+//template <typename T>
+//ostream& operator<< (ostream& out, const MyVertor<T>& obj) {
+//    int size = obj.getSize();
+//    
+//    for (int i = 0; i < size; i ++) {
+//        out << obj.m_space[i] << " ";
+//    }
+//    
+//    return out;
+//}
+
+int main(int argc, const char * argv[]) {
+    MyVertor<int> m1(10), m2(10);
+    for (int i = 0; i < 10; i ++) {
+        m1[i] = i;
+        cout << m1[i] << " ";
+
+    }
+    
+    cout << endl;
+    
+    m2 = m1;
+    
+    MyVertor<int> m3 = m1;
+    
+    cout << m3;    return 0;
+}
+```
