@@ -210,3 +210,40 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### 强制类型转换
+
+- static_cast 同类型转换(编译时进行类型检测), 比如int->long
+- reinterpret_cast<tpyeName>  不同类型之间转换 可以转换任意一个32bit整数，包括所有的指针和整数
+- dynamic_cast<typeName> 多态之间转换
+- const_cast<typeName> 去除只读属性
+
+```cpp
+void modifyP(const char *p) {
+    char *p1 = NULL;
+    p1 = const_cast<char *>(p);
+    
+    p1[0] = 'A';
+}
+
+int main(int argc, const char * argv[]) {
+    
+    char buf[10] = "aaaaaaaaa";
+    
+    modifyP(buf);
+    
+    cout << "buf:" << buf << endl;
+    
+    int a = 1;
+    double b;
+    char c;
+    int* p = NULL;
+    
+//    p = static_cast<int *>(a);
+    p = reinterpret_cast<int *>(a);
+    
+    cout << "p: " << p << endl;
+    
+    return 0;
+}
+```
