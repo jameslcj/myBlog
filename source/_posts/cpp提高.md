@@ -252,19 +252,22 @@ int main(int argc, const char * argv[]) {
 
 ```cpp
 // throw是限定抛出什么类型的异常
-void TestThrow() throw(int)
+class ExpObj {};
+void TestThrow() throw(int, char, ExpObj)
 {
-    throw 1;
+    throw ExpObj();
 }
 
 int main(int argc, const char * argv[]) {
     
     try {
         TestThrow();
-    } catch (char p) {
-        cout << "throw char :" << p << endl;
-    } catch (int p) {
-        cout << "throw int :" << p << endl;
+    } catch (char *e) {
+        cout << "throw char :" << e << endl;
+    } catch (int e) {
+        cout << "throw int :" << e << endl;
+    } catch (ExpObj e) {
+        cout << "throw ExpObj :" << endl;
     } catch (...) {
         cout << "unkown exp"  << endl;
     }
