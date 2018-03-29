@@ -247,3 +247,29 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+## 异常处理
+
+```cpp
+// throw是限定抛出什么类型的异常
+void TestThrow() throw(int)
+{
+    throw 1;
+}
+
+int main(int argc, const char * argv[]) {
+    
+    try {
+        TestThrow();
+    } catch (char p) {
+        cout << "throw char :" << p << endl;
+    } catch (int p) {
+        cout << "throw int :" << p << endl;
+    } catch (...) {
+        cout << "unkown exp"  << endl;
+    }
+
+    
+    return 0;
+}
+```
