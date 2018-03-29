@@ -251,8 +251,17 @@ int main(int argc, const char * argv[]) {
 ## 异常处理
 
 ```cpp
+class ExpObj {
+public:
+    ExpObj() {
+        cout << "构造函数" << endl;
+    }
+    ~ExpObj() {
+        cout << "析构函数" << endl;
+    }
+};
+
 // throw是限定抛出什么类型的异常
-class ExpObj {};
 void TestThrow() throw(int, char, ExpObj)
 {
     throw ExpObj();
@@ -266,7 +275,7 @@ int main(int argc, const char * argv[]) {
         cout << "throw char :" << e << endl;
     } catch (int e) {
         cout << "throw int :" << e << endl;
-    } catch (ExpObj e) {
+    } catch (ExpObj &e) { //如果不用引用来接受 会进行拷贝对象
         cout << "throw ExpObj :" << endl;
     } catch (...) {
         cout << "unkown exp"  << endl;
