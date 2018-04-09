@@ -285,3 +285,49 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### 通过多态实现自定义异常
+```cpp
+class TestThrowClass {
+public:
+    class expParent{
+    public:
+        virtual void printfExp() {
+            cout << "expParent" << endl;
+        }
+    };
+    class expSub1 : public expParent{
+    public:
+        virtual void printfExp() {
+            cout << "expSub1" << endl;
+        }
+    };
+    class expSub2 : public expParent{
+    public:
+        virtual void printfExp() {
+            cout << "expSub2" << endl;
+        }
+    };
+    
+    void testMethod(int num) {
+        if (num < 0) {
+            throw expSub1();
+        } else if (num > 0) {
+            throw expSub2();
+        } else {
+            throw expParent();
+        }
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    TestThrowClass t;
+    try {
+        t.testMethod(-1);
+        
+    } catch (TestThrowClass::expParent &e) {
+        e.printfExp();
+    }
+    return 0;
+}
+```
