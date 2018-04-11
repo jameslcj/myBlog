@@ -286,6 +286,35 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+### 自定义异常
+```cpp
+class MyExp : public exception {
+public:
+    MyExp(char * p) {
+        this->m_p = p;
+    }
+    virtual const char * what() {
+        cout << "MyExp: " << m_p << endl;
+        return m_p;
+    }
+private:
+    char* m_p;
+};
+
+void testMyExp() {
+    throw MyExp("异常抛出");
+}
+
+int main(int argc, const char * argv[]) {
+    try {
+        testMyExp();
+    } catch (MyExp &e) {
+        e.what();
+    }
+    return 0;
+}
+```
+
 ### 通过多态实现自定义异常
 ```cpp
 class TestThrowClass {
@@ -328,6 +357,48 @@ int main(int argc, const char * argv[]) {
     } catch (TestThrowClass::expParent &e) {
         e.printfExp();
     }
+    return 0;
+}
+```
+
+## IO
+```cpp
+#include "fstream"
+class Teacher {
+public:
+    Teacher() {
+        _age = 18;
+        strcpy(_name, "");
+    }
+    Teacher(char *name, int age) {
+        _age = age;
+        strcpy(_name, name);
+    }
+    void printInfo() {
+        cout << "name: " << _name << " age: " << _age << endl;
+    }
+private:
+    int _age;
+    char _name[32];
+};
+int main(int argc, const char * argv[]) {
+    char *fname = "/Users/xxxx/Desktop/test.txt";
+    ofstream fout(fname, ios::binary);
+    if (!fout) {
+        cout << "open file error";
+        return -1;
+    }
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 19);
+    fout.write((char*)&t1, sizeof(Teacher));
+    fout.write((char*)&t2, sizeof(Teacher));
+    fout.close();
+
+    Teacher tmp;
+    ifstream fin(fname);
+    fin.read((char *)&tmp, sizeof(Teacher));
+    tmp.printInfo();
+    fin.close();
     return 0;
 }
 ```
