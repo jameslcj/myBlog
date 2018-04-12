@@ -402,3 +402,74 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+## STL
+### vector
+```cpp
+#include "vector"
+class Teacher {
+public:
+    Teacher() {
+        _age = 18;
+        strcpy(_name, "");
+    }
+    Teacher(char *name, int age) {
+        _age = age;
+        strcpy(_name, name);
+    }
+    void printInfo() {
+        cout << "name: " << _name << " age: " << _age << endl;
+    }
+private:
+    int _age;
+    char _name[32];
+}
+void TestVector() {
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 19);
+    vector<Teacher> v;
+    v.push_back(t1);
+    v.push_back(t2);
+    
+    for (vector<Teacher>::iterator it = v.begin(); it != v.end(); it++) {
+        it->printInfo();
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    TestVector();
+    return 0;
+}
+```
+
+### string
+```cpp
+#include "string"
+#include "algorithm"
+void TestString() {
+    string s1 = "hello world hello world hello world hello world ";
+    string str = "hello";
+    string str2 = "HELLO";
+    int strlen = str2.length();
+    int index = 0;
+    while ((index = s1.find(str, index)) != string::npos) {
+        s1.replace(index, strlen, str2);
+        index += strlen;
+    }
+    cout << "s1: " << s1 << endl;
+    
+    str.append(" world");
+    transform(str.begin(), str.end(), str.begin(), ::toupper);
+    cout << "str: " << str << endl;
+    
+    str2.insert(0, "nihao, ");
+    str2.insert(str2.length(), "!!!");
+    transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
+    cout << "str2: " << str2 << endl;
+}
+int main(int argc, const char * argv[]) {
+    TestString();
+    return 0;
+}
+
+```
