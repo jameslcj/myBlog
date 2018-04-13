@@ -473,3 +473,108 @@ int main(int argc, const char * argv[]) {
 }
 
 ```
+
+### list
+```cpp
+#include "list"
+void printList(list<int> l) {
+    for (list<int>::iterator it = l.begin(); it != l.end(); it++) {
+        cout << *it << " ";
+    }
+    cout << endl;
+}
+void TestList() {
+    list<int> l;
+    for (int i = 0; i < 10; i++) {
+        l.push_back(i);
+    }
+    printList(l);
+    
+    l.insert(l.begin(), -1);
+    l.insert(l.begin(), -2);
+    l.insert(l.begin(), -3);
+    printList(l);
+    
+    l.erase(l.begin());
+    printList(l);
+    
+    list<int>::iterator it1 = l.begin();
+    list<int>::iterator it2 = l.begin();
+    it2 ++;
+    it2 ++; //必须一次次叠加不能直接+2
+    l.erase(it1, it2);
+    printList(l);
+    
+    l.remove(5);
+    printList(l);
+}
+int main(int argc, const char * argv[]) {
+    TestList();
+    return 0;
+}
+```
+
+### queue
+```cpp
+#include "queue"
+void fillQueue(priority_queue<int> &q) {
+    q.push(1);
+    q.push(10);
+    q.push(4);
+    q.push(8);
+}
+void fillQueue2(priority_queue<int, vector<int>, less<int>> &q) {
+    q.push(1);
+    q.push(10);
+    q.push(4);
+    q.push(8);
+}
+void fillQueue3(priority_queue<int, vector<int>, greater<int>> &q) {
+    q.push(1);
+    q.push(10);
+    q.push(4);
+    q.push(8);
+}
+
+void printQueue(priority_queue<int> q) {
+    while (!q.empty()) {
+        int tmp = q.top();
+        cout << tmp << " ";
+        q.pop();
+    }
+    cout << endl;
+}
+void printQueue2(priority_queue<int, vector<int>, less<int>> q) {
+    while (!q.empty()) {
+        int tmp = q.top();
+        cout << tmp << " ";
+        q.pop();
+    }
+    cout << endl;
+}
+void printQueue3(priority_queue<int, vector<int>, greater<int>> q) {
+    while (!q.empty()) {
+        int tmp = q.top();
+        cout << tmp << " ";
+        q.pop();
+    }
+    cout << endl;
+}
+void TestQueue() {
+    priority_queue<int> q1;//默认最大值优先队列
+    priority_queue<int, vector<int>, less<int>> q2; //最大值优先队列
+    priority_queue<int, vector<int>, greater<int> > q3;//最小值优先队列
+    
+    fillQueue(q1);
+    fillQueue2(q2);
+    fillQueue3(q3);
+    
+    printQueue(q1);
+    printQueue2(q2);
+    printQueue3(q3);
+}
+int main(int argc, const char * argv[]) {
+    TestQueue();
+    return 0;
+}
+```
