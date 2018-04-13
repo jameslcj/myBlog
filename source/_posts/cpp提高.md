@@ -286,6 +286,35 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+### 自定义异常
+```cpp
+class MyExp : public exception {
+public:
+    MyExp(char * p) {
+        this->m_p = p;
+    }
+    virtual const char * what() {
+        cout << "MyExp: " << m_p << endl;
+        return m_p;
+    }
+private:
+    char* m_p;
+};
+
+void testMyExp() {
+    throw MyExp("异常抛出");
+}
+
+int main(int argc, const char * argv[]) {
+    try {
+        testMyExp();
+    } catch (MyExp &e) {
+        e.what();
+    }
+    return 0;
+}
+```
+
 ### 通过多态实现自定义异常
 ```cpp
 class TestThrowClass {
@@ -328,6 +357,224 @@ int main(int argc, const char * argv[]) {
     } catch (TestThrowClass::expParent &e) {
         e.printfExp();
     }
+    return 0;
+}
+```
+
+## IO
+```cpp
+#include "fstream"
+class Teacher {
+public:
+    Teacher() {
+        _age = 18;
+        strcpy(_name, "");
+    }
+    Teacher(char *name, int age) {
+        _age = age;
+        strcpy(_name, name);
+    }
+    void printInfo() {
+        cout << "name: " << _name << " age: " << _age << endl;
+    }
+private:
+    int _age;
+    char _name[32];
+};
+int main(int argc, const char * argv[]) {
+    char *fname = "/Users/xxxx/Desktop/test.txt";
+    ofstream fout(fname, ios::binary);
+    if (!fout) {
+        cout << "open file error";
+        return -1;
+    }
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 19);
+    fout.write((char*)&t1, sizeof(Teacher));
+    fout.write((char*)&t2, sizeof(Teacher));
+    fout.close();
+
+    Teacher tmp;
+    ifstream fin(fname);
+    fin.read((char *)&tmp, sizeof(Teacher));
+    tmp.printInfo();
+    fin.close();
+    return 0;
+}
+```
+
+## STL
+### vector
+```cpp
+#include "vector"
+class Teacher {
+public:
+    Teacher() {
+        _age = 18;
+        strcpy(_name, "");
+    }
+    Teacher(char *name, int age) {
+        _age = age;
+        strcpy(_name, name);
+    }
+    void printInfo() {
+        cout << "name: " << _name << " age: " << _age << endl;
+    }
+private:
+    int _age;
+    char _name[32];
+}
+void TestVector() {
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 19);
+    vector<Teacher> v;
+    v.push_back(t1);
+    v.push_back(t2);
+    
+    for (vector<Teacher>::iterator it = v.begin(); it != v.end(); it++) {
+        it->printInfo();
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    TestVector();
+    return 0;
+}
+```
+
+### string
+```cpp
+#include "string"
+#include "algorithm"
+void TestString() {
+    string s1 = "hello world hello world hello world hello world ";
+    string str = "hello";
+    string str2 = "HELLO";
+    int strlen = str2.length();
+    int index = 0;
+    while ((index = s1.find(str, index)) != string::npos) {
+        s1.replace(index, strlen, str2);
+        index += strlen;
+    }
+    cout << "s1: " << s1 << endl;
+    
+    str.append(" world");
+    transform(str.begin(), str.end(), str.begin(), ::toupper);
+    cout << "str: " << str << endl;
+    
+    str2.insert(0, "nihao, ");
+    str2.insert(str2.length(), "!!!");
+    transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
+    cout << "str2: " << str2 << endl;
+}
+int main(int argc, const char * argv[]) {
+    TestString();
+    return 0;
+}
+
+```
+
+### list
+```cpp
+#include "list"
+void printList(list<int> l) {
+    for (list<int>::iterator it = l.begin(); it != l.end(); it++) {
+        cout << *it << " ";
+    }
+    cout << endl;
+}
+void TestList() {
+    list<int> l;
+    for (int i = 0; i < 10; i++) {
+        l.push_back(i);
+    }
+    printList(l);
+    
+    l.insert(l.begin(), -1);
+    l.insert(l.begin(), -2);
+    l.insert(l.begin(), -3);
+    printList(l);
+    
+    l.erase(l.begin());
+    printList(l);
+    
+    list<int>::iterator it1 = l.begin();
+    list<int>::iterator it2 = l.begin();
+    it2 ++;
+    it2 ++; //必须一次次叠加不能直接+2
+    l.erase(it1, it2);
+    printList(l);
+    
+    l.remove(5);
+    printList(l);
+}
+int main(int argc, const char * argv[]) {
+    TestList();
+    return 0;
+}
+```
+
+### queue
+```cpp
+#include "queue"
+void fillQueue(priority_queue<int> &q) {
+    q.push(1);
+    q.push(10);
+    q.push(4);
+    q.push(8);
+}
+void fillQueue2(priority_queue<int, vector<int>, less<int>> &q) {
+    q.push(1);
+    q.push(10);
+    q.push(4);
+    q.push(8);
+}
+void fillQueue3(priority_queue<int, vector<int>, greater<int>> &q) {
+    q.push(1);
+    q.push(10);
+    q.push(4);
+    q.push(8);
+}
+
+void printQueue(priority_queue<int> q) {
+    while (!q.empty()) {
+        int tmp = q.top();
+        cout << tmp << " ";
+        q.pop();
+    }
+    cout << endl;
+}
+void printQueue2(priority_queue<int, vector<int>, less<int>> q) {
+    while (!q.empty()) {
+        int tmp = q.top();
+        cout << tmp << " ";
+        q.pop();
+    }
+    cout << endl;
+}
+void printQueue3(priority_queue<int, vector<int>, greater<int>> q) {
+    while (!q.empty()) {
+        int tmp = q.top();
+        cout << tmp << " ";
+        q.pop();
+    }
+    cout << endl;
+}
+void TestQueue() {
+    priority_queue<int> q1;//默认最大值优先队列
+    priority_queue<int, vector<int>, less<int>> q2; //最大值优先队列
+    priority_queue<int, vector<int>, greater<int> > q3;//最小值优先队列
+    
+    fillQueue(q1);
+    fillQueue2(q2);
+    fillQueue3(q3);
+    
+    printQueue(q1);
+    printQueue2(q2);
+    printQueue3(q3);
+}
+int main(int argc, const char * argv[]) {
+    TestQueue();
     return 0;
 }
 ```
