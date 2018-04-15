@@ -578,3 +578,68 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### set/multiset
+```cpp
+#include "set"
+class Teacher {
+public:
+    Teacher() {
+        _age = 18;
+        strcpy(_name, "");
+    }
+    Teacher(char *name, int age) {
+        _age = age;
+        strcpy(_name, name);
+    }
+    void printInfo() {
+        cout << "name: " << _name << " age: " << _age << endl;
+    }
+    int getAge() const {
+        return _age;
+    }
+    const char* getName() const {
+        return _name;
+    }
+private:
+    int _age;
+    char _name[32];
+};
+struct CustOrder {
+    bool operator()(const Teacher& left, const Teacher& right) {
+        return left.getAge() < right.getAge();
+    }
+};
+void insertSet(set<Teacher, CustOrder>&s, Teacher &t) {
+    pair<set<Teacher, CustOrder>::iterator, bool> pair = s.insert(t);
+    if (pair.second == true) {
+        cout << t.getName() << " 插入成功" << endl;
+    } else {
+        cout << t.getName() << " 插入失败" << endl;
+
+    }
+}
+void TestSet() {
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 38);
+    Teacher t3("t3", 28);
+    Teacher t4("t4", 8);
+    Teacher t5("t5", 18);
+    Teacher t6("t6", 58);
+    set<Teacher, CustOrder> s1;
+    insertSet(s1, t1);
+    insertSet(s1, t2);
+    insertSet(s1, t3);
+    insertSet(s1, t4);
+    insertSet(s1, t5);
+    insertSet(s1, t6);
+    
+    for (set<Teacher, CustOrder>::iterator it = s1.begin(); it != s1.end(); it++) {
+        cout << "name: " << it->getName() << " age:" << it->getAge() << endl;
+    }
+}
+int main(int argc, const char * argv[]) {
+    TestSet();
+    return 0;
+}
+```
