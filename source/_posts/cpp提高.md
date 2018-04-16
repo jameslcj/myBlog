@@ -643,3 +643,43 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### map/multimap
+```cpp
+#include "map"
+#include "string"
+
+void TestMap() {
+    map<string, int> m1;
+    m1.insert(pair<string, int>("m1", 18));
+    m1.insert(make_pair("m2", 19));
+    m1.insert(map<string, int>::value_type("m3", 20));
+    m1["m4"] = 21;
+    
+    while (!m1.empty()) {
+        map<string, int>::iterator it = m1.begin();
+        cout << "name: " << it->first << " age: " << it->second << endl;
+        m1.erase(it);
+    }
+    
+    
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 19);
+    Teacher t3("t3", 20);
+    Teacher t4("t4", 21);
+    multimap<string, Teacher> m2;
+    m2.insert(make_pair("js", t1));
+    m2.insert(make_pair("js", t2));
+    m2.insert(make_pair("cpp", t3));
+    m2.insert(make_pair("cpp", t4));
+    
+    for (multimap<string, Teacher>::iterator it = m2.begin(); it != m2.end(); it ++) {
+        cout << "type: " << it->first << " info: name:" << it->second.getName() << " age: " << it->second.getAge() << endl;
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    TestMap();
+    return 0;
+}
+```
