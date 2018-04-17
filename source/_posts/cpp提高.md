@@ -683,3 +683,46 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### 算法
+#### for_each
+```cpp
+template <typename T>
+class ShowElement {
+public:
+    int num = 0;
+    void operator()(T &t) {
+        cout << t << endl;
+        num++;
+    }
+    
+    void showNum() {
+        cout << "num: " << num << endl;
+    }
+};
+
+template <typename T>
+void showElementFunc(T &t) {
+    cout << t << endl;
+}
+
+void TestCallBack() {    vector<int> v;
+    v.push_back(1);
+    v.push_back(3);
+    v.push_back(5);
+    
+    for_each(v.begin(), v.end(), ShowElement<int>());
+    for_each(v.begin(), v.end(), showElementFunc<int>);
+    
+    //for_each函数是值传递不是引用传递
+    ShowElement<int> showElement;
+    ShowElement<int> showElement2 = for_each(v.begin(), v.end(), showElement);
+    showElement.showNum(); //0
+    showElement2.showNum();//3
+}
+
+int main(int argc, const char * argv[]) {
+    TestCallBack();
+    return 0;
+}
+```
