@@ -706,7 +706,7 @@ void showElementFunc(T &t) {
     cout << t << endl;
 }
 
-void TestCallBack() {    vector<int> v;
+void testCallBack() {    vector<int> v;
     v.push_back(1);
     v.push_back(3);
     v.push_back(5);
@@ -722,7 +722,45 @@ void TestCallBack() {    vector<int> v;
 }
 
 int main(int argc, const char * argv[]) {
-    TestCallBack();
+    testCallBack();
     return 0;
 }
+```
+
+#### 谓词/find_if 
+```cpp
+template <typename T>
+class IsDiv {
+public:
+    T div;
+    IsDiv(T &t) {
+        div = t;
+    }
+    
+    bool operator()(T &t) {
+        return (t % div == 0);
+    }
+};
+
+void testPred() {
+    vector<int> v;
+    for (int i = 33; i <= 66; i++) {
+        v.push_back(i);
+    }
+    
+    int div = 5;
+    
+    vector<int>::iterator it =  find_if(v.begin(), v.end(), IsDiv<int>(div));
+    if (it == v.end()) {
+        cout << "没有找到能被 " << div << " 整除的数" << endl;
+    } else {
+        cout << "能被 " << div << " 整除的数是 " << *it << endl;
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    testPred();
+    return 0;
+}
+
 ```
