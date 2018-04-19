@@ -764,3 +764,44 @@ int main(int argc, const char * argv[]) {
 }
 
 ```
+
+### functional
+> for_each 的回调函数返回值可以是void, transform 必须有返回值
+
+```cpp
+#include "functional"
+int increase(int num) {
+    return num + 10;
+}
+template <typename T>
+void printV(vector<T> v) {
+    cout << "vector: ";
+    for (int i = 0; i < v.size(); i++) {
+        cout << v[i] << " ";
+    }
+    cout << endl;
+}
+void testFunc() {
+    vector<int> v;
+    for (int i = 0; i < 10; i ++) {
+        v.push_back(i);
+    }
+    
+    int num = 4;
+    int count = count_if(v.begin(), v.end(), bind2nd(greater<int>(), num));
+    cout << "大于 " << num << " 的个数为 " << count << endl;
+    
+    count = count_if(v.begin(), v.end(), bind2nd(modulus<int>(), num));
+    cout << "能被 " << num << " 整除的个数为 " << count << endl;
+    
+    count = count_if(v.begin(), v.end(), not1(bind2nd(modulus<int>(), num)));
+    cout << "不能被 " << num << " 整除的个数为 " << count << endl;
+    
+    transform(v.begin(), v.end(), v.begin(), increase);
+    printV(v);
+}
+int main(int argc, const char * argv[]) {
+    testFunc();
+    return 0;
+}
+```
