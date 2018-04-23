@@ -85,6 +85,19 @@ class ErrorBoundary extends React.Component {
 </ErrorBoundary>
 ```
 
+## ReactDom
+### ReactDOMServer.renderToString(element) 
+在服务端渲染react的html, 加速首屏渲染和SEO优化
+
+```js
+import ReactDOMServer from 'react-dom/server';
+ReactDOMServer.renderToString(element) 
+```
+
+### ReactDOM.hydrate(element, container[, callback])
+可以对服务器渲染的容器挂载事件
+
+
 ## React 与 DOM
 - findDOMNode 需要react节点
 
