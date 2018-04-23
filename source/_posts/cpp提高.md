@@ -578,3 +578,230 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### set/multiset
+```cpp
+#include "set"
+class Teacher {
+public:
+    Teacher() {
+        _age = 18;
+        strcpy(_name, "");
+    }
+    Teacher(char *name, int age) {
+        _age = age;
+        strcpy(_name, name);
+    }
+    void printInfo() {
+        cout << "name: " << _name << " age: " << _age << endl;
+    }
+    int getAge() const {
+        return _age;
+    }
+    const char* getName() const {
+        return _name;
+    }
+private:
+    int _age;
+    char _name[32];
+};
+struct CustOrder {
+    bool operator()(const Teacher& left, const Teacher& right) {
+        return left.getAge() < right.getAge();
+    }
+};
+void insertSet(set<Teacher, CustOrder>&s, Teacher &t) {
+    pair<set<Teacher, CustOrder>::iterator, bool> pair = s.insert(t);
+    if (pair.second == true) {
+        cout << t.getName() << " 插入成功" << endl;
+    } else {
+        cout << t.getName() << " 插入失败" << endl;
+
+    }
+}
+void TestSet() {
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 38);
+    Teacher t3("t3", 28);
+    Teacher t4("t4", 8);
+    Teacher t5("t5", 18);
+    Teacher t6("t6", 58);
+    set<Teacher, CustOrder> s1;
+    insertSet(s1, t1);
+    insertSet(s1, t2);
+    insertSet(s1, t3);
+    insertSet(s1, t4);
+    insertSet(s1, t5);
+    insertSet(s1, t6);
+    
+    for (set<Teacher, CustOrder>::iterator it = s1.begin(); it != s1.end(); it++) {
+        cout << "name: " << it->getName() << " age:" << it->getAge() << endl;
+    }
+}
+int main(int argc, const char * argv[]) {
+    TestSet();
+    return 0;
+}
+```
+
+### map/multimap
+```cpp
+#include "map"
+#include "string"
+
+void TestMap() {
+    map<string, int> m1;
+    m1.insert(pair<string, int>("m1", 18));
+    m1.insert(make_pair("m2", 19));
+    m1.insert(map<string, int>::value_type("m3", 20));
+    m1["m4"] = 21;
+    
+    while (!m1.empty()) {
+        map<string, int>::iterator it = m1.begin();
+        cout << "name: " << it->first << " age: " << it->second << endl;
+        m1.erase(it);
+    }
+    
+    
+    Teacher t1("t1", 18);
+    Teacher t2("t2", 19);
+    Teacher t3("t3", 20);
+    Teacher t4("t4", 21);
+    multimap<string, Teacher> m2;
+    m2.insert(make_pair("js", t1));
+    m2.insert(make_pair("js", t2));
+    m2.insert(make_pair("cpp", t3));
+    m2.insert(make_pair("cpp", t4));
+    
+    for (multimap<string, Teacher>::iterator it = m2.begin(); it != m2.end(); it ++) {
+        cout << "type: " << it->first << " info: name:" << it->second.getName() << " age: " << it->second.getAge() << endl;
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    TestMap();
+    return 0;
+}
+```
+
+### 算法
+#### for_each
+```cpp
+template <typename T>
+class ShowElement {
+public:
+    int num = 0;
+    void operator()(T &t) {
+        cout << t << endl;
+        num++;
+    }
+    
+    void showNum() {
+        cout << "num: " << num << endl;
+    }
+};
+
+template <typename T>
+void showElementFunc(T &t) {
+    cout << t << endl;
+}
+
+void testCallBack() {    vector<int> v;
+    v.push_back(1);
+    v.push_back(3);
+    v.push_back(5);
+    
+    for_each(v.begin(), v.end(), ShowElement<int>());
+    for_each(v.begin(), v.end(), showElementFunc<int>);
+    
+    //for_each函数是值传递不是引用传递
+    ShowElement<int> showElement;
+    ShowElement<int> showElement2 = for_each(v.begin(), v.end(), showElement);
+    showElement.showNum(); //0
+    showElement2.showNum();//3
+}
+
+int main(int argc, const char * argv[]) {
+    testCallBack();
+    return 0;
+}
+```
+
+#### 谓词/find_if 
+```cpp
+template <typename T>
+class IsDiv {
+public:
+    T div;
+    IsDiv(T &t) {
+        div = t;
+    }
+    
+    bool operator()(T &t) {
+        return (t % div == 0);
+    }
+};
+
+void testPred() {
+    vector<int> v;
+    for (int i = 33; i <= 66; i++) {
+        v.push_back(i);
+    }
+    
+    int div = 5;
+    
+    vector<int>::iterator it =  find_if(v.begin(), v.end(), IsDiv<int>(div));
+    if (it == v.end()) {
+        cout << "没有找到能被 " << div << " 整除的数" << endl;
+    } else {
+        cout << "能被 " << div << " 整除的数是 " << *it << endl;
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    testPred();
+    return 0;
+}
+
+```
+
+### functional
+> for_each 的回调函数返回值可以是void, transform 必须有返回值
+
+```cpp
+#include "functional"
+int increase(int num) {
+    return num + 10;
+}
+template <typename T>
+void printV(vector<T> v) {
+    cout << "vector: ";
+    for (int i = 0; i < v.size(); i++) {
+        cout << v[i] << " ";
+    }
+    cout << endl;
+}
+void testFunc() {
+    vector<int> v;
+    for (int i = 0; i < 10; i ++) {
+        v.push_back(i);
+    }
+    
+    int num = 4;
+    int count = count_if(v.begin(), v.end(), bind2nd(greater<int>(), num));
+    cout << "大于 " << num << " 的个数为 " << count << endl;
+    
+    count = count_if(v.begin(), v.end(), bind2nd(modulus<int>(), num));
+    cout << "能被 " << num << " 整除的个数为 " << count << endl;
+    
+    count = count_if(v.begin(), v.end(), not1(bind2nd(modulus<int>(), num)));
+    cout << "不能被 " << num << " 整除的个数为 " << count << endl;
+    
+    transform(v.begin(), v.end(), v.begin(), increase);
+    printV(v);
+}
+int main(int argc, const char * argv[]) {
+    testFunc();
+    return 0;
+}
+```
