@@ -68,7 +68,7 @@ int main(int argc, const char * argv[]) {
 ```
 
 ### vfork
-> vfork与fork的最大区别是 vfork会共享父进程的数据空间
+> vfork与fork的最大区别是 vfork会共享父进程的数据空间, 子进程先运行, 父进程后运行;
 
 ```c
 #include <sys/types.h>
