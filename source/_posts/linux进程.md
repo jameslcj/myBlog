@@ -184,3 +184,68 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### wait-system
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <signal.h>
+#include <errno.h>
+#include <signal.h>
+
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+
+
+int main(int argc, const char * argv[]) {
+    int i = 0, j = 0, procNum = 0, count = 0, ret = 0;
+    pid_t pid;
+    signal(SIGCHLD, SIG_IGN);
+    printf("before fork pid: %d \n", getpid());
+    
+    printf("plz input procNum: ");
+    scanf("%d", &procNum);
+    
+    printf("plz input count: ");
+    scanf("%d", &count);
+    
+    for (i = 0; i < procNum; i++) {
+        pid = fork();
+        
+        if (pid == -1) {
+            perror("fork");
+            return -1;
+        }
+        
+        if (pid == 0) {
+            for (j = 0; j < count; j++) {
+                printf("child process dosomething\n");
+                sleep(1);
+            }
+            exit(0);
+        }
+    }
+    
+    while (1) {
+        ret = wait(NULL);
+        if (ret == -1) {
+            if (errno == EINTR) { // 判断是否被别的信号异常中断, 做异常处理
+                continue;
+            }
+            break;
+        }
+    }
+    
+    printf("parent process out\n");
+    
+    
+    return 0;
+}
+```
