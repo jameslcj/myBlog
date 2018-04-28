@@ -121,3 +121,7 @@ class App extends Component {
 nextElement, container, callback)
 
 > unstable_renderSubtreeIntoContainer 与 render 方法很相似，但 render 方法缺少一个插入某个节点的参数
+
+### ReactDOM.render 与 ReactDOM.createPortal 的区别
+1. createPortal 可以获取父级的context
+2. createPortal 的事件可以被传递给父级
