@@ -10,7 +10,7 @@ tags: javaScript高级程序设计笔记
 ### 全局作用域
 > 所有全局作用域下声明的变量和函数都会变成`window`的属性和方法
 
-```
+```js
 var test = 'test';
 function getTest() {
   console.log(this.test);
@@ -24,9 +24,12 @@ window.getTest();//"test"
 直接定义在`window`上的变量可以被`delete`, 但全局变量不能;
 根本原因是因为通过`var`声明的变量有一个名为`[Configurable]`的特性, 这个特性的值被设置为`false`, 所以无法删除;
 
-```
+```js
 var test1 = 'hello';
 window.test2 = 'world';
+Object.getOwnPropertyDescriptor(window, "test1"); //configurable: false
+Object.getOwnPropertyDescriptor(window, "test2"); //configurable: true
+
 delete window.test1; //IE < 9 直接报错, 其他返回false;
 delete window.test2; //IE < 9 直接报错, 其他返回true;
 console.log(window.test1);//"hello"
@@ -35,7 +38,7 @@ console.log(window.test2);//undefined
 
 > 如果直接访问一个没有声明的变量会报错, 但是我们可以通过`window`的属性方式来访问, 避免报错
 
-```
+```js
 console.log(someVar);//ERROR
 console.log(window.someVar);//undefined
 ```
@@ -44,7 +47,7 @@ console.log(window.someVar);//undefined
 > `screenLeft`与 `screenTop`, `screenX`与`screenY` 都是获取窗口相对于屏幕上边和左边的位置;
 也可以使用`moveTo()`, `moveBy()`移动窗口位置, ie7以上默认是禁止的
 
-```
+```js
 var leftPos = (typeof window.screenLeft == "number") ? window.screenLeft : window.screenX;
 var topPos = (typeof window.screenTop == "number") ? window.screenTop : window.screenY;
 ```
@@ -58,7 +61,7 @@ var topPos = (typeof window.screenTop == "number") ? window.screenTop : window.s
 移动IE浏览器把布局视口信息保存在`document.body.clientWidth`和`document.body.clientHeight`中;
 可以使用`resizeTo(x, y)`和`resizeBY(x, y)`跳转浏览器窗口大小, 但是ie7+模式是禁用的;
 
-```
+```js
 var pageWidth = window.innerWidth;
 var pageHeight = window.innerHeight;
 if (typeof pageWidth != 'number') {
@@ -83,7 +86,7 @@ if (typeof pageWidth != 'number') {
 > 在ie8和chrome中, 为了能与新打开的页面保持通信, 我们获取了它的引用, 但是为了保持通信, 就不能在独立进程中运行.
 所以如果需要独立运行, 就需要将这个引用设置为`null`, 一旦切断, 就没有办法恢复;
 
-```
+```js
 var newWindow = window.open("http://www.aliyun.com", "newWindow", "height=400, width=400, resizable=yes");
 //原始窗口可调用newWindow.close()来关闭新打开窗口
 //切断通信, 使新页面独立进程运行
@@ -93,7 +96,7 @@ newWindow = null;
 > 为了安全性, 很多浏览器屏蔽了新建打开浏览器窗口, 我们可以通过判断返回值, 来判断是否被屏蔽了; 如果是浏览器扩展或者其他程序阻止的弹出窗口,
 那么window.open()通常会抛出一个错误; 可以用以下代码检测:
 
-```
+```js
 var blocked = false;
 try {
   var newWindow = window.open("http://www.aliyun.com", "_blank");
@@ -127,7 +130,7 @@ if (blocked) {
 
 ### 改变地址的方式
 
-```
+```js
 window.location = "https://www.aliyun.com";
 location.href = "https://www.aliyun.com";
 //上面2种方式, 最终还是调用了下面的方法
@@ -137,13 +140,13 @@ location.assign("https://www.aliyun.com");
 ### replace
 > 上面的方式都会生成浏览历史, 可以通过后退回到之前页面; 使用`location.replace('https://www.aliyun.com')`, 就无法回退到之前的页面
 
-```
+```js
 location.replace('https://www.aliyun.com');
 ```
 ### reload重新加载页面
 > `reload`可以重新加载页面, 它接受一个布尔值参数, 如果传递为`true`, 强制从服务器重新加载, 否则有可能从缓存中加载
 
-```
+```js
 location.reload();//重新加载(有可能从缓存中加载)
 location.reload(true);//重新加载(从服务器重新加载)
 ```
@@ -157,7 +160,7 @@ location.reload(true);//重新加载(从服务器重新加载)
 > 非IE浏览器, 可以使用`navigator.plugins`来检测;
 而IE只能通过专有的`ActiveXObject`类型, 并且使用`COM`对象的方式实现插件, `Flash`的标识符是`ShockwaveFlash.ShockwaveFlash`
 
-```
+```js
 //非IE
 function hasPlugin(name) {
   name = name.toLowerCase();
@@ -187,7 +190,7 @@ console.log(hasIEPlugin("ShockwaveFlash.ShockwaveFlash"));
 > `navigator.plugins.refresh()` 可以刷新plugins已反映最新安装的插件;
 这个函数接受一个布尔值, 当为true时, 会重新加载包含插件的所有页面, 否则, 只更新plugins集合, 不重新加载页面;
 
-```
+```js
 navigator.plugins.refresh(true);
 ```
 
@@ -195,7 +198,7 @@ navigator.plugins.refresh(true);
 > html5定义了`navigator.registerContentHandler(要处理的MIME类型, 页面URL, 应用程序名称)`和`navigator.registerProtocolHandler(要处理的协议, 页面的URL, 应用程序名称)`
 这两个方法可以让一个站点知名它可以处理特定类型的信息
 
-```
+```js
 navigator.registerContentHandler("application/res+xml", "http://www.somereader.com?feed=%s", "Some Reader");
 navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%s", "Some Mail Client");
 ```
@@ -209,7 +212,7 @@ navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%
 ## history
 > 记录浏览历史
 
-```
+```js
 //后退一页
 history.go(-1);
 //前进一页
