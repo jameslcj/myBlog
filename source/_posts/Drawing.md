@@ -57,3 +57,11 @@ createRadialGradient()
     }
     createCanvasPattern();
 ```
+
+## Paths, Stroking, and Filling
+- arc(x, y, r, oriPI, desPI, true/false(是否顺时针))
+- beginPath() 开始新的路径绘图
+- closePath() 闭合路径
+- fill() 根据fillStyle填充图形
+- rect(double x, double y, double width, double height) 绘制矩形路径
+- stroke() 根据strokeStyle绘制路径
