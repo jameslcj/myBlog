@@ -249,3 +249,31 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 ```
+
+### 自定义signal信号行为
+```c
+void handle(int num) {
+    printf("handle ..., %d, %d", num, SIGQUIT);
+    if (num == SIGQUIT) {
+//        exit(0);
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    char tmpchar;
+    //重写默认信号行为, 当有信息时, 系统会调用handle方法
+    signal(SIGINT, handle);
+    
+    while ( (tmpchar = getchar()) != 'a' ) {
+        pause();
+    }
+    
+    //恢复默认信号行为
+    signal(SIGINT, SIG_DFL);
+    
+    while (1) {
+        pause();
+    }
+    return 0;
+}
+```
