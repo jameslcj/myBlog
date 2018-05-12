@@ -65,3 +65,19 @@ createRadialGradient()
 - fill() 根据fillStyle填充图形
 - rect(double x, double y, double width, double height) 绘制矩形路径
 - stroke() 根据strokeStyle绘制路径
+
+
+## 划线
+> 如果1px宽度的线刚好落在像素的边界上, 会导致线的宽度变成2px
+
+```js
+context.lineWidth = 1;
+context.beginPath();
+context.moveTo(50, 10);
+context.lineTo(450, 10);
+context.stroke();
+context.beginPath();
+context.moveTo(50.5, 50.5);
+context.lineTo(350.5, 50.5);
+context.stroke();
+```
