@@ -81,3 +81,76 @@ context.moveTo(50.5, 50.5);
 context.lineTo(350.5, 50.5);
 context.stroke();
 ```
+
+## 划虚线
+```js
+function drawDashedLine(context, x1, y1, x2, y2, dashLen = 5) {
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var dashNum = 0;
+
+    if (dx === 0) {
+        dashNum = Math.abs(dy / dashLen);
+    } else if (dy === 0) {
+        dashNum = Math.abs(dx / dashLen);
+    } else {
+        dashNum = Math.floor(Math.sqrt(dx * dx, dy * dy) / dashLen);
+    }
+
+    context.beginPath();
+    for (var i = 0; i < dashNum; i++) {
+        context[i % 2 === 0 ? "lineTo" : "moveTo"](x1 + dx / dashNum * i, y1 + dy / dashNum * i);
+    }
+    context.stroke();
+}
+
+drawDashedLine(context, 20, 20, 220, 20);
+drawDashedLine(context, 220, 20, 220, 280);
+drawDashedLine(context, 220, 280, 20, 280);
+drawDashedLine(context, 20, 280, 20, 20);
+```
+
+### CanvasRenderingContext2D
+
+```js
+var moveToFunction = CanvasRenderingContext2D.prototype.moveTo;
+    CanvasRenderingContext2D.prototype.lastMoveToLocation = {};
+    CanvasRenderingContext2D.prototype.moveTo = function (x, y) {
+        moveToFunction.apply(context, [x,y]);
+        this.lastMoveToLocation.x = x;
+        this.lastMoveToLocation.y = y;
+    };
+    CanvasRenderingContext2D.prototype.dashedLineTo = function (x, y, dashLength) {
+        dashLength = dashLength === undefined ? 5 : dashLength;
+        var startX = this.lastMoveToLocation.x;
+        var startY = this.lastMoveToLocation.y;
+        var deltaX = x - startX;
+        var deltaY = y - startY;
+        var numDashes = Math.floor(Math.sqrt(deltaX * deltaX
+                                    + deltaY * deltaY) / dashLength);
+        for (var i=0; i < numDashes; ++i) {
+            this[ i % 2 === 0 ? 'moveTo' : 'lineTo' ]
+                (startX + (deltaX / numDashes) * i,
+                    startY + (deltaY / numDashes) * i);
+        }
+        this.moveTo(x, y);
+    };
+
+    context.lineWidth = 3;
+    context.strokeStyle = 'blue';
+    context.moveTo(20, 20);
+    context.dashedLineTo(context.canvas.width-20, 20);
+    context.dashedLineTo(context.canvas.width-20,
+                        context.canvas.height-20);
+    context.dashedLineTo(20, context.canvas.height-20);
+    context.dashedLineTo(20, 20);
+    context.dashedLineTo(context.canvas.width-20,
+    context.canvas.height-20);
+
+    context.stroke();
+```
+
+## Line joins
+- miter(default)
+- bevel
+- round
