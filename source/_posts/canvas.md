@@ -192,3 +192,20 @@ canvas.strokeText('Hello Wolrd', 200, 200)
 ```
 ### 默认样式
 - 默认宽300, 高150
+
+### 贝塞尔曲线
+- context.quadraticCurveTo(double cpx, double cpy, double x, double y)
+- context.bezierCurveTo(double cpx, double cpy, double cp2x, double cp2y, double x, double y)
+
+```js
+ (function() {
+        context.beginPath();
+        context.strokeStyle = 'white';
+        context.fillStyle = 'cornflowerblue';
+        context.moveTo(300, 300);
+        context.lineTo(500, 500);
+        context.quadraticCurveTo(350, 250, 450, 450);
+        context.fill();
+        context.stroke();
+    })();
+```
