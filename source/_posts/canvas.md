@@ -209,3 +209,26 @@ canvas.strokeText('Hello Wolrd', 200, 200)
         context.stroke();
     })();
 ```
+
+### polygon
+```js
+(function() {
+    function drawPolygon(x, y, r, num) {
+        context.beginPath();
+        context.moveTo(x + r, y);
+        var avgArc = 2 * Math.PI / num;
+        context.strokeStyle = "black"
+        for (var i = 0; i < num; i++) {
+            var tmpX = Math.round(r * Math.cos(avgArc * i) + x);
+            var tmpY = Math.round(r * Math.sin(avgArc * i) + y);
+            console.log(tmpX, tmpY)
+            context.lineTo(tmpX, tmpY);
+        }
+        context.closePath();
+        context.stroke();
+    }
+
+    drawPolygon(200, 200, 50, 6);
+    drawPolygon(300, 300, 50, 4);
+})();
+```
