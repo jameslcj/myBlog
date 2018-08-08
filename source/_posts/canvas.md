@@ -232,3 +232,7 @@ canvas.strokeText('Hello Wolrd', 200, 200)
     drawPolygon(300, 300, 50, 4);
 })();
 ```
+
+- rotate(double angleInRadians)
+- scale(double x, double y)
+- translate(double x, double y)
